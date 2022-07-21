@@ -1,0 +1,213 @@
+<form [formGroup]="advertForm" (ngSubmit)="onSubmit()">
+  <div class="row">
+    <div class="card col-sm-12" style="justify-content: center">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/4/45/LC_Waikiki_logo.PNG"
+      />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12 form-group">
+      <input type="text" placeholder="Upload Cover Photo" />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6 col-xs-12 form-group">
+      <label for="name">Advert Name</label>
+      <input
+        type="text"
+        id="advertName"
+        class="form-control"
+        name="advertName"
+        placeholder="Advert Name"
+        formControlName="name"
+      />
+    </div>
+    <div class="col-sm-6 col-xs-12 form-group">
+      <label for="amount">Advert Summary</label>
+      <input
+        type="text"
+        id="advertSummary"
+        class="form-control"
+        name="advertSummary"
+        placeholder="Advert Summary"
+        formControlName="summary"
+      />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6 col-xs-12 form-group">
+      <label for="position">Position</label>
+      <input
+        type="text"
+        id="position"
+        class="form-control"
+        name="position"
+        placeholder="Position"
+        formControlName="position"
+      />
+    </div>
+    <div class="col-sm-6 col-xs-12 form-group">
+      <label for="capactiy">Capacity</label>
+      <input
+        type="number"
+        id="capacity"
+        class="form-control"
+        name="capacity"
+        placeholder="Capacity"
+        formControlName="capacity"
+      />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-3 col-xs-12 form-group">
+      <input
+        type="date"
+        id="startDate"
+        name="startDate"
+        placeholder="Select Date"
+        class="col-sm-12 nc-calendar form-control"
+        formControlName="startDate"
+      />
+    </div>
+    <div class="col-sm-3 col-xs-12 form-group justify-content-center">
+      <i class="col-sm-12 fa fa-calendar form-control" aria-hidden="true">
+        Starting Date</i
+      >
+    </div>
+    <div class="col-sm-3 col-xs-12 form-group">
+      <input
+        type="date"
+        id="endDate"
+        name="endDate"
+        placeholder="Select Date"
+        class="col-sm-12 nc-calendar form-control"
+        formControlName="endDate"
+      />
+    </div>
+    <div class="col-sm-3 col-xs-12 form-group justify-content-center">
+      <i class="col-sm-12 fa fa-calendar form-control" aria-hidden="true">
+        End Date</i
+      >
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6 col xs-12">
+      <label for="department">Department</label>
+      <input
+        type="text"
+        id="department"
+        name="department"
+        placeholder="Department"
+        class="col-sm-12 form-control"
+        formControlName="department"
+      />
+    </div>
+    <div class="col-sm-6 col xs-12">
+      <label for="companyName">Company Name</label>
+      <input
+        type="text"
+        id="companyName"
+        name="companyName"
+        placeholder="CompanyName"
+        class="col-sm-12 form-control"
+        formControlName="companyName"
+      />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6 col-xs-12">
+      <label for="province">Province</label>
+      <select
+        name="province"
+        id="province"
+        class="col-sm-12 form-control"
+        formControlName="province"
+        #province
+        [(ngModel)]="selectedProvinceID"
+      >
+        <option value="">Please select province</option>
+        <option
+          *ngFor="let province of getProvinces()"
+          [value]="province.plaka"
+        >
+          {{ province.il }}
+        </option>
+      </select>
+    </div>
+    <div class="col-sm-6 col-xs-12">
+      <label for="district">District</label>
+      <select
+        name="district"
+        id="district"
+        class="col-sm-12 form-control"
+        formControlName="district"
+        #district
+      >
+        <option value="">Please select district</option>
+        <option *ngFor="let district of getDistricts()" [value]="district">
+          {{ district }}
+        </option>
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="form-group">
+        <label for="jobDesc">Job Description</label>
+        <div *ngIf="isAdmin">
+          <quill-editor
+            [styles]="quillEditorStyle"
+            formControlName="jobDefinition"
+            (onContentChanged)="onContentChanged($event)"
+          ></quill-editor>
+          <span *ngIf="advertForm.get('jobDefinition').value !== null">
+            {{
+              maxLength - advertForm.get("jobDefinition").value.length + 7
+            }}</span
+          >
+        </div>
+        <div *ngIf="!isAdmin" class="card card-stats">
+          <div class="card-body">
+            <div
+              [innerHTML]="advertForm.get('jobDefinition').value"
+              style="margin: 17px"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="isAdmin && !createMode" class="row">
+    <div class="col-sm-12">
+      <table-cmp [advertID]="advertID"></table-cmp>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-2" style="margin-left: 15px">
+      <button type="submit" class="btn btn-primary mt-5">Submit</button>
+    </div>
+    <div
+      *ngIf="isAdmin && !createMode"
+      class="col-xs-2"
+      style="margin-left: 10px"
+    >
+      <button
+        type="button"
+        class="btn btn-danger mt-5"
+        (click)="onClickDelete()"
+      >
+        Delete
+      </button>
+    </div>
+    <div class="col-xs-2" style="margin-left: 10px">
+      <button
+        type="button"
+        class="btn btn-warning mt-5"
+        (click)="onClickCancel()"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+</form>
