@@ -27,6 +27,7 @@ interface Province {
 export class AdvertComponent implements OnInit, OnDestroy {
   @ViewChild("province", { static: false }) provinceList: ElementRef;
   @ViewChild("district", { static: false }) districtList: ElementRef;
+  @ViewChild("userQuill", { static: false }) userQuill: ElementRef;
   advertForm: FormGroup;
   loginSubs: Subscription;
   maxLength: number = 250;

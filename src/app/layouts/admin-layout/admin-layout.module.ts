@@ -13,7 +13,7 @@ import { IconsComponent } from "../../pages/icons/icons.component";
 import { AdvertsComponent } from "../../pages/adverts/adverts.component";
 import { UpgradeComponent } from "../../pages/upgrade/upgrade.component";
 
-import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgbModule, NgbTooltipModule } from "@ng-bootstrap/ng-bootstrap";
 import { AdvertSearchFilter } from "app/shared/advert-search-filter.pipe";
 import { AdvertProvinceFilter } from "app/shared/advert-province-filter.pipe";
 import { AdvertDepartmentFilter } from "app/shared/adverts-department-filter.pipe";
@@ -33,9 +33,8 @@ import { UserModal } from "app/pages/adverts/advert/advert-modal/advert-modal.co
     PdfViewerModule,
     NgxExtendedPdfViewerModule,
     MatDialogModule,
+    NgbTooltipModule,
   ],
-  exports: [TableComponent],
-
   declarations: [
     DashboardComponent,
     UserComponent,

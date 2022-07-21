@@ -16,7 +16,11 @@
       </div>
       <div class="row">
         <div class="update ml-auto mr-auto">
-          <button type="button" class="btn btn-primary btn-round">
+          <button
+            *ngIf="!inModal"
+            type="button"
+            class="btn btn-primary btn-round"
+          >
             <i class="fa fa-cloud-upload">Update CV</i>
           </button>
         </div>
@@ -44,7 +48,11 @@
             </div>
             <div class="row">
               <div class="update ml-auto mr-auto">
-                <button type="button" class="btn btn-primary btn-round">
+                <button
+                  *ngIf="!inModal"
+                  type="button"
+                  class="btn btn-primary btn-round"
+                >
                   <i class="fa fa-cloud-upload">Update Photo</i>
                 </button>
               </div>
@@ -176,7 +184,11 @@
               </div>
               <div class="row">
                 <div class="update ml-auto mr-auto">
-                  <button type="submit" class="btn btn-primary btn-round">
+                  <button
+                    *ngIf="!inModal"
+                    type="submit"
+                    class="btn btn-primary btn-round"
+                  >
                     Update Profile
                   </button>
                 </div>

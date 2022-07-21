@@ -3,6 +3,7 @@ import {
   AfterContentInit,
   Component,
   ElementRef,
+  Input,
   OnInit,
   ViewChild,
 } from "@angular/core";
@@ -24,6 +25,7 @@ export class UserComponent implements OnInit, AfterContentInit {
   @ViewChild("district", { static: false }) districtList: ElementRef;
   pdfSrc = "src/app/pages/user/EvrenIspiroglu_cv.pdf";
   user: User;
+  @Input() inModal: boolean = false;
   selectedProvinceID: number;
 
   // pdfSrc = "https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf";
@@ -36,6 +38,9 @@ export class UserComponent implements OnInit, AfterContentInit {
   }
   ngOnInit() {
     this.initForm();
+    if (this.inModal) {
+      this.userForm.disable();
+    }
     console.log(this.userForm.value);
   }
   ngAfterContentInit() {

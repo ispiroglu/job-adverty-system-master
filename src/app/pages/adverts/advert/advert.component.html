@@ -152,36 +152,28 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-12">
-      <div class="form-group">
-        <label for="jobDesc">Job Description</label>
-        <div *ngIf="isAdmin">
-          <quill-editor
-            [styles]="quillEditorStyle"
-            formControlName="jobDefinition"
-            (onContentChanged)="onContentChanged($event)"
-          ></quill-editor>
-          <span *ngIf="advertForm.get('jobDefinition').value !== null">
-            {{
-              maxLength - advertForm.get("jobDefinition").value.length + 7
-            }}</span
-          >
-        </div>
-        <div *ngIf="!isAdmin" class="card card-stats">
-          <div class="card-body">
-            <div
-              [innerHTML]="advertForm.get('jobDefinition').value"
-              style="margin: 17px"
-            ></div>
-          </div>
-        </div>
+    <span class="form-group col-md-12">
+      <label for="jobDesc">Job Description</label>
+      <div *ngIf="isAdmin">
+        <quill-editor
+          [styles]="quillEditorStyle"
+          formControlName="jobDefinition"
+          (onContentChanged)="onContentChanged($event)"
+        ></quill-editor>
+        <span *ngIf="advertForm.get('jobDefinition').value !== null">
+          {{
+            maxLength - advertForm.get("jobDefinition").value.length + 7
+          }}</span
+        >
       </div>
-    </div>
+      <div *ngIf="!isAdmin" class="card card-stats">
+        <span class="card-body" style="margin: 17px" #userQuill> </span>
+      </div>
+    </span>
   </div>
+
   <div *ngIf="isAdmin && !createMode" class="row">
-    <div class="col-sm-12">
-      <table-cmp [advertID]="advertID"></table-cmp>
-    </div>
+    <table-cmp class="col-md-12" [advertID]="advertID"></table-cmp>
   </div>
   <div class="row">
     <div class="col-xs-2" style="margin-left: 15px">

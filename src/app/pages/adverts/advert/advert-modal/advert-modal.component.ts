@@ -1,56 +1,46 @@
-import { Component, OnInit, ViewEncapsulation } from "@angular/core";
 import {
-  NgbActiveModal,
-  ModalDismissReasons,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  ViewEncapsulation,
+} from "@angular/core";
+import {
   NgbModal,
+  ModalDismissReasons,
+  NgbActiveModal,
 } from "@ng-bootstrap/ng-bootstrap";
+import { User } from "app/pages/user/user.model";
 
 @Component({
   selector: "app-advert-modal",
   templateUrl: "./advert-modal.component.html",
   styleUrls: ["./advert-modal.component.scss"],
-  styles: [
-    `
-      .dark-modal .modal-content {
-        background-color: #292b2c;
-        color: white;
-      }
-      .dark-modal .close {
-        color: white;
-      }
-      .modal-backdrop {
-        display: none;
-      }
-      .light-blue-backdrop {
-        background-color: #5cb3fd;
-      }
-    `,
-  ],
-})
-export class UserModal {
-  closeResult = "";
-  constructor(public modalService: NgbModal) {}
+  styles: [``],
 
-  open(content) {
-    this.modalService
-      .open(content, { ariaLabelledBy: "modal-basic-title" })
-      .result.then(
-        (result) => {
-          this.closeResult = `Closed with: ${result}`;
-        },
-        (reason) => {
-          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        }
-      );
+  encapsulation: ViewEncapsulation.None,
+})
+export class UserModal implements OnInit {
+  @ViewChild("modalDialogue") modalDialogue: ElementRef;
+  @Input() inModal: boolean;
+  @Input() user: User;
+
+  @Output()
+  clickOutside: EventEmitter<Event> = new EventEmitter<Event>();
+
+  constructor(private activeModal: NgbActiveModal) {}
+  ngOnInit(): void {
+    console.log(this.inModal);
+    console.log(this.user);
   }
 
-  private getDismissReason(reason: any): string {
-    if (reason === ModalDismissReasons.ESC) {
-      return "by pressing ESC";
-    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-      return "by clicking on a backdrop";
-    } else {
-      return `with: ${reason}`;
-    }
+  onClickAccept() {}
+  onClickReject() {}
+  onClickCancel() {
+    this.activeModal.dismiss();
   }
 }

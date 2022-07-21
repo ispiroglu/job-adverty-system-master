@@ -1,4 +1,3 @@
-<!--
 <div class="card">
   <div class="card-header">
     Adverts
@@ -72,7 +71,7 @@
   </div>
 </div>
 
-<div style="justify-content: center; margin: 15px">
+<!-- <div style="justify-content: center; margin: 15px">
   <span class="row">
     <span
       *ngFor="let advert of adverts; let i = index"
@@ -128,10 +127,9 @@
       </span>
     </span>
   </span>
-</div>
--->
+</div> -->
 
-<div class="row">
+<!-- <div class="row">
   <div class="col-md-12">
     <div class="card">
       <div class="card-header">
@@ -300,4 +298,68 @@
       </div>
     </div>
   </div>
+</div> -->
+
+<div class="row justify-content-center">
+  <span
+    *ngFor="
+      let advert of getActiveAdverts()
+        | AdvertSearchFilter: searchText
+        | AdvertProvinceFilter: selectedProvince
+        | AdvertPositionFilter: selectedPosition
+        | AdvertDepartmentFilter: selectedDepartment
+    "
+    class="col-lg-3 col-md-4 col-sm-6 col-xs-12"
+    style="padding: 16px"
+  >
+    <!-- Pipes will change -->
+    <div class="card card-stats text-right">
+      <span class="card-body row">
+        <span class="col-md-4 col-xs-12">
+          <img
+            src="{{ advert.photoUrl }}"
+            alt=""
+            class="icon-big text-center icon-warning"
+            style="
+              width: 100%;
+              height: 80px;
+              object-fit: cover;
+              object-position: 50% 50%;
+            "
+          />
+          <!-- Should show img nicely -->
+        </span>
+        <span class="col-md-8 col-xs-12 numbers">
+          <p class="card-category">{{ advert.name }}</p>
+          <p class="card-title">{{ advert.position }}</p>
+          <p class="card-text" style="font-size: 17px">
+            {{ advert.summary }}
+          </p>
+        </span>
+      </span>
+      <span class="card-footer">
+        <hr />
+        <span class="row stats">
+          <span class="col-md-4 col-xs-12">
+            <i *ngIf="isAdmin" class="fa fa-pencil"></i>
+            <i
+              *ngIf="!isAdmin"
+              class="fa fa-handshake-o"
+              style="font-size: 12px"
+            ></i>
+            <button
+              type="button"
+              class="btn btn-link"
+              (click)="onClickApply(advert.id)"
+            >
+              {{ isAdmin ? "Edit" : "Apply" }}
+            </button>
+          </span>
+          <p class="col-md-8 col-xs-12 float-right">
+            {{ advert.district }} / {{ advert.province }}
+          </p>
+        </span>
+      </span>
+    </div>
+  </span>
 </div>

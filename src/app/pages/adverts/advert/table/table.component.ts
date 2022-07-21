@@ -1,6 +1,10 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
-import { NgbModal, ModalDismissReasons } from "@ng-bootstrap/ng-bootstrap";
+import {
+  NgbModal,
+  ModalDismissReasons,
+  NgbActiveModal,
+} from "@ng-bootstrap/ng-bootstrap";
 import { AdvertService } from "app/adverts/advert.service";
 import { UserComponent } from "app/pages/user/user.component";
 import { User } from "app/pages/user/user.model";
@@ -16,9 +20,6 @@ import { UserModal } from "../advert-modal/advert-modal.component";
     `
       tr:hover {
         background-color: Rgb(230, 230, 230);
-      }
-      .modal-backdrop {
-        display: none;
       }
     `,
   ],
@@ -36,11 +37,13 @@ export class TableComponent implements OnInit {
     this.applicants = this.userService.getUsers(); // Mock
   }
   onClickApplicant(applicant: User) {
-    this.modalService
-      .open(UserModal, { size: "xl", scrollable: true })
-      .result.then((result) => {
-        console.log(result);
-      });
+    const modalRef = this.modalService.open(UserModal, {
+      size: "xl",
+      scrollable: true,
+      backdrop: false,
+    });
+    modalRef.componentInstance.applicant = applicant;
+    modalRef.componentInstance.inModal = true;
   }
   onClickExcelOutput() {
     let element = document.getElementById("table");
@@ -50,28 +53,5 @@ export class TableComponent implements OnInit {
     XLSX.utils.book_append_sheet(wb, ws, `Advert ${this.advertID} Applicants`);
 
     XLSX.writeFile(wb, `advert-${this.advertID}-applicants.xlsx`);
-  }
-
-  open(content) {
-    this.modalService
-      .open(content, { ariaLabelledBy: "modal-basic-title" })
-      .result.then(
-        (result) => {
-          this.closeResult = `Closed with: ${result}`;
-        },
-        (reason) => {
-          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        }
-      );
-  }
-
-  private getDismissReason(reason: any): string {
-    if (reason === ModalDismissReasons.ESC) {
-      return "by pressing ESC";
-    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-      return "by clicking on a backdrop";
-    } else {
-      return `with: ${reason}`;
-    }
   }
 }
