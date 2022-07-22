@@ -32,7 +32,7 @@ export class AdvertComponent implements OnInit, OnDestroy {
   @ViewChild("province", { static: false }) provinceList: ElementRef;
   @ViewChild("district", { static: false }) districtList: ElementRef;
   @ViewChildren("userQuill") userQuill: ElementRef;
-  @Input() currentUserID: number;
+  currentUserID: number;
 
   photoUrl: string = "";
   advertForm: FormGroup;
@@ -71,10 +71,14 @@ export class AdvertComponent implements OnInit, OnDestroy {
       this.initForm();
     });
   }
-
+  isFormValid() {
+    return this.advertForm.valid;
+  }
   onSubmit() {
     if (confirm("Are you sure to confirm?")) {
       if (!this.isAdmin) {
+
+        console.log((this.currentUserID))
         this.advertService
           .getAdvert(this.advertID)
           .applicants.push(this.userService.getUser(this.currentUserID));
@@ -102,7 +106,7 @@ export class AdvertComponent implements OnInit, OnDestroy {
     console.log(this.advertService.getAdverts());
   }
   onContentChanged(event) {
-    let maxLength: number = 250;
+    const maxLength = 250;
     if (event.editor.getLength() > maxLength) {
       event.editor.deleteText(maxLength, event.editor.getLength());
     }
@@ -161,11 +165,11 @@ export class AdvertComponent implements OnInit, OnDestroy {
       district: new FormControl(jobDistrcit, Validators.required),
       jobDefinition: new FormControl(jobDesc, Validators.required),
       photoUrl: new FormControl(jobImgPath),
-      // PhotoURL de eklenmeli
     });
 
     if (!this.isAdmin) {
       this.advertForm.disable();
+      this.currentUserID = this.userService.getCurrentUserID();
     }
   }
 

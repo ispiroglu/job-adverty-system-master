@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { Advert } from "app/pages/adverts/advert.model";
 import { UserService } from "app/pages/user/user.service";
 import { Subject } from "rxjs";
+import {User} from '../../user/user.model';
 
 @Injectable({
   providedIn: "root",
@@ -128,5 +129,14 @@ export class AdvertService {
   }
   getApplicants(id: number) {
     return this.adverts[id].applicants;
+  }
+  removeApplicant(id: number, applicant: User) {
+    const idxOfApplicant = this.adverts[id].applicants.indexOf(applicant)
+    console.log(idxOfApplicant)
+    const demo = this.adverts[id].applicants.find((insideApplicant: User) => {
+      return insideApplicant.email === applicant.email;
+    })
+    console.log(this.adverts[id].applicants.indexOf(demo))
+    this.adverts[id].applicants.splice(idxOfApplicant, 1);
   }
 }

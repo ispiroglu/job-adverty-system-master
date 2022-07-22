@@ -16,6 +16,7 @@ import { User } from "app/pages/user/user.model";
 import { UserService } from "app/pages/user/user.service";
 import * as XLSX from "xlsx";
 import { UserModal } from "../advert-modal/advert-modal.component";
+import {AdvertService} from '../advert.service';
 
 @Component({
   selector: "table-cmp",
@@ -43,10 +44,11 @@ export class TableComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private userService: UserService
+    private userService: UserService,
+    private advertService: AdvertService
   ) {}
   ngOnInit() {
-    this.applicants = this.userService.getUsers(); // Mock
+    this.applicants = this.advertService.getAdvert(this.advertID).applicants; // Mock
   }
   onClickApplicant(applicant: User) {
     const modalRef = this.modalService.open(UserModal, {
@@ -56,9 +58,10 @@ export class TableComponent implements OnInit {
     });
     modalRef.componentInstance.applicant = applicant;
     modalRef.componentInstance.inModal = true;
+    modalRef.componentInstance.advertID = this.advertID;
   }
   onClickExcelOutput() {
-    let element = document.getElementById("table");
+    const element = document.getElementById("table");
 
     const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();

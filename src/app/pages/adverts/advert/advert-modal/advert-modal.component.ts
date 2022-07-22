@@ -1,20 +1,14 @@
 import {
   Component,
-  ElementRef,
-  EventEmitter,
-  HostListener,
   Input,
   OnInit,
-  Output,
-  ViewChild,
   ViewEncapsulation,
 } from "@angular/core";
 import {
-  NgbModal,
-  ModalDismissReasons,
   NgbActiveModal,
 } from "@ng-bootstrap/ng-bootstrap";
 import { User } from "app/pages/user/user.model";
+import {AdvertService} from '../advert.service';
 
 @Component({
   selector: "app-advert-modal",
@@ -25,21 +19,25 @@ import { User } from "app/pages/user/user.model";
   encapsulation: ViewEncapsulation.None,
 })
 export class UserModal implements OnInit {
-  @ViewChild("modalDialogue") modalDialogue: ElementRef;
   @Input() inModal: boolean;
-  @Input() user: User;
+  @Input() applicant: User;
+  @Input() advertID: number;
 
-  @Output()
-  clickOutside: EventEmitter<Event> = new EventEmitter<Event>();
 
-  constructor(private activeModal: NgbActiveModal) {}
+  constructor(private activeModal: NgbActiveModal,
+              private advertService: AdvertService) {}
   ngOnInit(): void {
     console.log(this.inModal);
-    console.log(this.user);
+    console.log(this.applicant);
   }
 
-  onClickAccept() {}
-  onClickReject() {}
+  onClickAccept() {
+    this.advertService.removeApplicant(this.advertID, this.applicant)
+    this.onClickCancel()
+  }
+  onClickReject() {
+    this.onClickAccept()
+  }
   onClickCancel() {
     this.activeModal.dismiss();
   }

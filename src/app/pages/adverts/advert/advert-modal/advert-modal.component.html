@@ -1,4 +1,4 @@
-<div class="modal-header" (clickOutside)="onClickCancel()">
+<div class="modal-header">
   <h4 class="modal-title" style="text-align: center" id="modal-basic-title">
     Profile update
   </h4>
@@ -11,9 +11,9 @@
     X
   </button>
 </div>
-<div class="modal-body" (clickOutside)="onClickCancel()">
+<div class="modal-body">
   <!-- Should pass user id -->
-  <user-cmp [inModal]="inModal" (clickOutside)="onClickCancel()"></user-cmp>
+  <user-cmp [inModal]="inModal"></user-cmp>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-success" (click)="onClickAccept()">

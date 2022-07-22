@@ -1,13 +1,15 @@
 import { Injectable } from "@angular/core";
 import { User } from "./user.model";
+import {LocationService} from '../../shared/locationJson/location-json.service';
 
 @Injectable({
   providedIn: "root",
 })
 export class UserService {
   private users: User[] = [];
+  currentUserID = 1;
 
-  constructor() {
+  constructor(private locationService: LocationService) {
     for (let i = 0; i < 10; i++) {
       this.users.push(
         new User(
@@ -31,5 +33,15 @@ export class UserService {
   }
   getUsers() {
     return this.users.slice();
+  }
+  getCurrentUserID() {
+    return this.currentUserID;
+  }
+  updateUser(newUser: User, userID: number) {
+    newUser.id = userID;
+    console.log(newUser.provinceID)
+    console.log(this.locationService.getProvinces()[0])
+    newUser.province = this.locationService.getProvinces()[newUser.provinceID].il;
+    this.users[userID] = newUser;
   }
 }

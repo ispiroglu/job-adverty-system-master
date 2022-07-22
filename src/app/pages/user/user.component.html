@@ -19,15 +19,6 @@
         class="card-body"
         style="display: flex; align-items: center; justify-content: center"
       >
-        <!-- <ngx-extended-pdf-viewer
-          [src]="'assets/pdf/EvrenIspiroglu_cv.pdf'"
-          [height]="'95%'"
-          [useBrowserLocale]="true"
-          [textLayer]="true"
-          [showHandToolButton]="true"
-        >
-        </ngx-extended-pdf-viewer> -->
-
         <pdf-viewer
           class="col-md-11"
           src="assets/pdf/Evren's Resume.pdf"
@@ -39,7 +30,7 @@
             width: auto;
             height: 98vh;
             max-height: 760px;
-            background-color: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+            background-color: rgba(100, 100, 111, 0.2);
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
             display: flex;
             align-items: center;
@@ -63,33 +54,6 @@
 
   <span class="col-md-5 col-xs-12" style="flex: 1">
     <span class="row">
-      <!-- <span class="col-md-12 card card-user">
-        <span class="image">
-          <img src="assets/img/damir-bosnjak.jpg" alt="..." />
-        </span>
-        <span class="card-body">
-          <span class="author">
-            <a href="#">
-              <img
-                class="avatar border-gray"
-                src="assets/img/default-avatar.png"
-                alt="..."
-              />
-              <h5 class="title">{{ user.firstname }} {{ user.lastname }}</h5>
-            </a>
-          </span>
-
-          <span class="row update ml-auto mr-auto">
-            <button
-              *ngIf="!inModal"
-              type="button"
-              class="btn btn-primary btn-round"
-            >
-              <i class="fa fa-cloud-upload">Update Photo</i>
-            </button>
-          </span>
-        </span>
-      </span> -->
       <span class="col-md-12">
         <span class="card card-user">
           <span class="image">
@@ -103,7 +67,7 @@
                   src="assets/img/mike.jpg"
                   alt="..."
                 />
-                <h5 class="title">{{ user.firstname }} {{ user.lastname }}</h5>
+                <h5 class="title" > {{ user.firstname }} {{ user.lastname }}</h5>
               </a>
             </div>
             <div class="row">
@@ -122,7 +86,7 @@
     <span class="row">
       <span class="col-md-12 card card-user">
         <span class="card-header">
-          <h5 class="card-header" style="text-align: cemter">Edit Profile</h5>
+          <h5 class="card-header" style="text-align: center">Edit Profile</h5>
         </span>
         <span class="card-body">
           <form [formGroup]="userForm" (ngSubmit)="onClickSubmit()">
@@ -160,7 +124,7 @@
                 </select>
               </span>
               <span class="col-md-4 form-group">
-                <label for="exampleInputEmail1">Email address</label>
+                <label >Email address</label>
                 <input
                   type="email"
                   class="form-control"
@@ -180,13 +144,13 @@
             </span>
             <span class="row">
               <span class="col-md-4 form-group">
-                <label for="province">Province</label>
+                <label>Province</label>
                 <select
                   class="col-sm-12 form-control"
-                  formControlName="province"
+                  formControlName="provinceID"
                   #province
+                  (change)="onProvinceChange($event)"
                 >
-                  <option value="">Please select province</option>
                   <option
                     *ngFor="let province of getProvinces()"
                     value="{{ province.plaka }}"
@@ -196,13 +160,12 @@
                 </select>
               </span>
               <span class="col-md-4 form-group">
-                <label for="district">District</label>
+                <label >District</label>
                 <select
                   class="col-sm-12 form-control"
                   formControlName="district"
                   #district
                 >
-                  <option value="">Please select district</option>
                   <option
                     *ngFor="let district of getDistricts()"
                     value="{{ district }}"
@@ -213,7 +176,7 @@
               </span>
 
               <span class="col-md-4 form-group">
-                <label for="exp">Experience</label>
+                <label >Experience</label>
                 <input
                   type="number"
                   class="form-control"
@@ -235,6 +198,7 @@
             <span class="row update ml-auto mr-auto">
               <button
                 *ngIf="!inModal"
+                [disabled]="!isFormValid()"
                 type="submit"
                 class="btn btn-primary btn-round"
               >

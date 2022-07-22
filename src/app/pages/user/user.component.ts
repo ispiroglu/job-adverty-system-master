@@ -17,25 +17,14 @@ import { UserService } from "./user.service";
   selector: "user-cmp",
   moduleId: module.id,
   templateUrl: "user.component.html",
-  styles: [],
+  styleUrls: ["user.component.scss"]
 })
 export class UserComponent implements OnInit {
   editMode = true;
   userID: number;
-  @ViewChild("province", { static: false }) provinceList: ElementRef;
-  @ViewChild("district", { static: false }) districtList: ElementRef;
   pdfSrc = "assets/json/EvrenIspiroglu_cv.pdf";
-
   user: User;
-  @Input() inModal: boolean = false;
-
-  selectedProvinceID: number;
-
-  public page = 1;
-
-  public pageLabel: string;
-
-  // pdfSrc = "https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf";
+  @Input() inModal = false;
   userForm: FormGroup;
   constructor(
     private userService: UserService,
@@ -48,10 +37,18 @@ export class UserComponent implements OnInit {
     if (this.inModal) {
       this.userForm.disable();
     }
-    console.log(this.userForm.value);
   }
 
-  onClickSubmit() {}
+  onClickSubmit() {
+    if (confirm("Are you sure about updating your profile?")) {
+      this.userService.updateUser(this.userForm.value, this.userID)
+      this.user = this.userForm.value;
+    }
+  }
+
+  isFormValid() {
+    return this.userForm.valid;
+  }
 
   initForm() {
     let firstname = "";
@@ -61,7 +58,7 @@ export class UserComponent implements OnInit {
     let phoneNumber = "";
     let district = "";
     let provinceID: number;
-    let experience: number = 0;
+    let experience: number;
     let aboutUser = "";
 
     this.user = this.userService.getUser(this.userID);
@@ -84,19 +81,22 @@ export class UserComponent implements OnInit {
       gender: new FormControl(gender.toLocaleLowerCase(), Validators.required),
       email: new FormControl(email, Validators.required),
       phoneNumber: new FormControl(phoneNumber, Validators.required),
-      province: new FormControl(provinceID, Validators.required),
+      provinceID: new FormControl(provinceID, Validators.required),
       district: new FormControl(district, Validators.required),
       experience: new FormControl(experience, Validators.required),
       aboutUser: new FormControl(aboutUser, Validators.required),
     });
   }
+  onProvinceChange(data: any) {
+    console.log(data)
+  }
   getProvinces() {
     return this.locationService.getProvinces();
   }
   getDistricts() {
-    if (this.userForm.get("province").value) {
+    if (this.userForm.get("provinceID").value) {
       return this.locationService.getProvinces()[
-        this.userForm.get("province").value
+        this.userForm.get("provinceID").value
       ].ilceleri;
     }
   }
