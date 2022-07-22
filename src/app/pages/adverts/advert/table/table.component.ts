@@ -1,4 +1,11 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  ViewChild,
+  ViewEncapsulation,
+} from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import {
   NgbModal,
@@ -21,8 +28,15 @@ import { UserModal } from "../advert-modal/advert-modal.component";
       tr:hover {
         background-color: Rgb(230, 230, 230);
       }
+      .dark-modal {
+        z-index: 2;
+      }
+      .modal-backdrop.modal-index {
+        z-index: 1031 !important;
+      }
     `,
   ],
+  encapsulation: ViewEncapsulation.None,
 })
 export class TableComponent implements OnInit {
   closeResult = "";
@@ -40,7 +54,7 @@ export class TableComponent implements OnInit {
     const modalRef = this.modalService.open(UserModal, {
       size: "xl",
       scrollable: true,
-      backdrop: false,
+      backdropClass: "modal-index",
     });
     modalRef.componentInstance.applicant = applicant;
     modalRef.componentInstance.inModal = true;

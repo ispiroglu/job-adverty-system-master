@@ -6,9 +6,15 @@ import {
   Input,
   OnInit,
   ViewChild,
+  ViewEncapsulation,
 } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { LocationService } from "app/shared/locationJson/location-json.service";
+import {
+  NgxExtendedPdfViewerModule,
+  NgxExtendedPdfViewerService,
+  pdfDefaultOptions,
+} from "ngx-extended-pdf-viewer";
 import { User } from "./user.model";
 
 import { UserService } from "./user.service";
@@ -17,16 +23,23 @@ import { UserService } from "./user.service";
   selector: "user-cmp",
   moduleId: module.id,
   templateUrl: "user.component.html",
+  styles: [],
 })
 export class UserComponent implements OnInit, AfterContentInit {
   editMode = true;
   userID: number;
   @ViewChild("province", { static: false }) provinceList: ElementRef;
   @ViewChild("district", { static: false }) districtList: ElementRef;
-  pdfSrc = "src/app/pages/user/EvrenIspiroglu_cv.pdf";
+  pdfSrc = "assets/json/EvrenIspiroglu_cv.pdf";
+
   user: User;
   @Input() inModal: boolean = false;
+
   selectedProvinceID: number;
+
+  public page = 1;
+
+  public pageLabel: string;
 
   // pdfSrc = "https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf";
   userForm: FormGroup;

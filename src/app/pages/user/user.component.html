@@ -1,18 +1,51 @@
-<div class="row">
-  <div class="col-md-5">
-    <div class="card">
+<div
+  class="row container col-12"
+  style="display: flex; align-items: stretch; justify-content: space-around"
+>
+  <span
+    class="col-md-7 col-xs-12"
+    style="
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+      justify-content: space-around;
+    "
+  >
+    <div class="card" style="flex: 1">
       <div class="card-header">
         <h5 class="title" style="text-align: center">CV</h5>
       </div>
-      <div class="card-body">
-        <ngx-extended-pdf-viewer
-          [src]="pdfSrc"
+      <div
+        class="card-body"
+        style="display: flex; align-items: center; justify-content: center"
+      >
+        <!-- <ngx-extended-pdf-viewer
+          [src]="'assets/pdf/EvrenIspiroglu_cv.pdf'"
           [height]="'95%'"
           [useBrowserLocale]="true"
           [textLayer]="true"
           [showHandToolButton]="true"
         >
-        </ngx-extended-pdf-viewer>
+        </ngx-extended-pdf-viewer> -->
+
+        <pdf-viewer
+          class="col-md-11"
+          src="assets/pdf/Evren's Resume.pdf"
+          [zoom]="0.95"
+          [autoresize]="true"
+          [render-text]="true"
+          [original-size]="false"
+          style="
+            width: auto;
+            height: 98vh;
+            max-height: 760px;
+            background-color: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        ></pdf-viewer>
       </div>
       <div class="row">
         <div class="update ml-auto mr-auto">
@@ -26,15 +59,42 @@
         </div>
       </div>
     </div>
-  </div>
+  </span>
 
-  <div class="col-md-7">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card card-user">
-          <div class="image">
+  <span class="col-md-5 col-xs-12" style="flex: 1">
+    <span class="row">
+      <!-- <span class="col-md-12 card card-user">
+        <span class="image">
+          <img src="assets/img/damir-bosnjak.jpg" alt="..." />
+        </span>
+        <span class="card-body">
+          <span class="author">
+            <a href="#">
+              <img
+                class="avatar border-gray"
+                src="assets/img/default-avatar.png"
+                alt="..."
+              />
+              <h5 class="title">{{ user.firstname }} {{ user.lastname }}</h5>
+            </a>
+          </span>
+
+          <span class="row update ml-auto mr-auto">
+            <button
+              *ngIf="!inModal"
+              type="button"
+              class="btn btn-primary btn-round"
+            >
+              <i class="fa fa-cloud-upload">Update Photo</i>
+            </button>
+          </span>
+        </span>
+      </span> -->
+      <span class="col-md-12">
+        <span class="card card-user">
+          <span class="image">
             <img src="assets/img/damir-bosnjak.jpg" alt="..." />
-          </div>
+          </span>
           <div class="card-body">
             <div class="author">
               <a href="#">
@@ -48,155 +108,143 @@
             </div>
             <div class="row">
               <div class="update ml-auto mr-auto">
-                <button
-                  *ngIf="!inModal"
-                  type="button"
-                  class="btn btn-primary btn-round"
-                >
+                <button type="button" class="btn btn-primary btn-round">
                   <i class="fa fa-cloud-upload">Update Photo</i>
                 </button>
               </div>
             </div>
             <div class="card-footer justify-content-center"></div>
           </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card card-user">
-          <div class="card-header">
-            <h5 class="card-header" style="text-align: cemter">Edit Profile</h5>
-          </div>
-          <div class="card-body">
-            <form [formGroup]="userForm" (ngSubmit)="onClickSubmit()">
-              <div class="row">
-                <div class="col-md-6 pr-1">
-                  <div class="form-group">
-                    <label>First Name</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="First Name"
-                      formControlName="firstname"
-                    />
-                  </div>
-                </div>
-                <div class="col-md-6 pl-1">
-                  <div class="form-group">
-                    <label>Last Name</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="Last Name"
-                      formControlName="lastname"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-4 form-group">
-                  <label>Gender</label>
-                  <select
-                    name="gender"
-                    class="form-control"
-                    formControlName="gender"
-                  >
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                  </select>
-                </div>
-                <div class="col-md-4 form-group">
-                  <label for="exampleInputEmail1">Email address</label>
-                  <input
-                    type="email"
-                    class="form-control"
-                    placeholder="Email"
-                    formControlName="email"
-                  />
-                </div>
-                <div class="col-md-4 form-group">
-                  <label>Phone Number</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Phone Number"
-                    formControlName="phoneNumber"
-                  />
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-4 form-group">
-                  <label for="province">Province</label>
-                  <select
-                    class="col-sm-12 form-control"
-                    formControlName="province"
-                    #province
-                    [(ngModel)]="selectedProvinceID"
-                  >
-                    <option value="">Please select province</option>
-                    <option
-                      *ngFor="let province of getProvinces()"
-                      [ngValue]="province.il"
-                    >
-                      {{ province.il }}
-                    </option>
-                  </select>
-                </div>
-                <div class="col-md-4 form-group">
-                  <label for="district">District</label>
-                  <select
-                    class="col-sm-12 form-control"
-                    formControlName="district"
-                    #district
-                  >
-                    <option value="">Please select district</option>
-                    <option
-                      *ngFor="let district of getDistricts()"
-                      [value]="district"
-                    >
-                      {{ district }}
-                    </option>
-                  </select>
-                </div>
+        </span>
+      </span>
+    </span>
 
-                <div class="col-md-4 form-group">
-                  <label for="exp">Experience</label>
-                  <input
-                    type="number"
-                    class="form-control"
-                    placeholder="Experience"
-                    formControlName="experience"
-                  />
-                </div>
+    <span class="row">
+      <span class="col-md-12 card card-user">
+        <span class="card-header">
+          <h5 class="card-header" style="text-align: cemter">Edit Profile</h5>
+        </span>
+        <span class="card-body">
+          <form [formGroup]="userForm" (ngSubmit)="onClickSubmit()">
+            <span class="row">
+              <div class="col-md-6 pr-1 form-group">
+                <label>First Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="First Name"
+                  formControlName="firstname"
+                />
               </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group">
-                    <label>About Me</label>
-                    <textarea
-                      class="form-control textarea"
-                      formControlName="aboutUser"
-                    >
-                    </textarea>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="update ml-auto mr-auto">
-                  <button
-                    *ngIf="!inModal"
-                    type="submit"
-                    class="btn btn-primary btn-round"
+
+              <span class="col-md-6 pl-1 form-group">
+                <label>Last Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Last Name"
+                  formControlName="lastname"
+                />
+              </span>
+            </span>
+            <span class="row">
+              <span class="col-md-4 form-group">
+                <label>Gender</label>
+                <select
+                  name="gender"
+                  class="form-control"
+                  formControlName="gender"
+                >
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </span>
+              <span class="col-md-4 form-group">
+                <label for="exampleInputEmail1">Email address</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  placeholder="Email"
+                  formControlName="email"
+                />
+              </span>
+              <span class="col-md-4 form-group">
+                <label>Phone Number</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Phone Number"
+                  formControlName="phoneNumber"
+                />
+              </span>
+            </span>
+            <span class="row">
+              <span class="col-md-4 form-group">
+                <label for="province">Province</label>
+                <select
+                  class="col-sm-12 form-control"
+                  formControlName="province"
+                  #province
+                  [(ngModel)]="selectedProvinceID"
+                >
+                  <option value="">Please select province</option>
+                  <option
+                    *ngFor="let province of getProvinces()"
+                    [ngValue]="province.il"
                   >
-                    Update Profile
-                  </button>
-                </div>
+                    {{ province.il }}
+                  </option>
+                </select>
+              </span>
+              <span class="col-md-4 form-group">
+                <label for="district">District</label>
+                <select
+                  class="col-sm-12 form-control"
+                  formControlName="district"
+                  #district
+                >
+                  <option value="">Please select district</option>
+                  <option
+                    *ngFor="let district of getDistricts()"
+                    [value]="district"
+                  >
+                    {{ district }}
+                  </option>
+                </select>
+              </span>
+
+              <span class="col-md-4 form-group">
+                <label for="exp">Experience</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  placeholder="Experience"
+                  formControlName="experience"
+                />
+              </span>
+            </span>
+            <span class="row">
+              <div class="col-md-12 form-group">
+                <label>About Me</label>
+                <textarea
+                  class="form-control textarea"
+                  formControlName="aboutUser"
+                >
+                </textarea>
               </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+            </span>
+            <span class="row update ml-auto mr-auto">
+              <button
+                *ngIf="!inModal"
+                type="submit"
+                class="btn btn-primary btn-round"
+              >
+                Update Profile
+              </button>
+            </span>
+          </form>
+        </span>
+      </span>
+    </span>
+  </span>
 </div>

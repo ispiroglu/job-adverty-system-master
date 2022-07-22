@@ -2,13 +2,17 @@ import { formatDate } from "@angular/common";
 import {
   Component,
   ElementRef,
+  Input,
   OnDestroy,
   OnInit,
   ViewChild,
+  ViewChildren,
 } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { AdvertService } from "app/adverts/advert.service";
+import { User } from "app/pages/user/user.model";
+import { UserService } from "app/pages/user/user.service";
 import { AuthService } from "app/shared/auth.service";
 import { LocationService } from "app/shared/locationJson/location-json.service";
 import { Subscription } from "rxjs";
@@ -27,16 +31,17 @@ interface Province {
 export class AdvertComponent implements OnInit, OnDestroy {
   @ViewChild("province", { static: false }) provinceList: ElementRef;
   @ViewChild("district", { static: false }) districtList: ElementRef;
-  @ViewChild("userQuill", { static: false }) userQuill: ElementRef;
+  @ViewChildren("userQuill") userQuill: ElementRef;
+  @Input() currentUserID: number;
+
+  photoUrl: string = "";
   advertForm: FormGroup;
   loginSubs: Subscription;
-  maxLength: number = 250;
   createMode: boolean = false;
-  isAdmin: boolean; // need real auth
-  editMode: boolean = false;
-  jobDescContent: string;
+  isAdmin: boolean = false; // need real auth
   advertID: number;
   selectedProvinceID: number;
+  jobDefinition: string;
 
   quillEditorStyle = {
     height: "300px",
@@ -48,7 +53,8 @@ export class AdvertComponent implements OnInit, OnDestroy {
     private router: Router,
     private advertService: AdvertService,
     private authService: AuthService,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -62,23 +68,26 @@ export class AdvertComponent implements OnInit, OnDestroy {
     this.route.params.subscribe((params: Params) => {
       this.advertID = +params["id"];
       this.createMode = params["id"] === undefined;
-      this.editMode = params["edit"] !== null;
       this.initForm();
     });
   }
 
   onSubmit() {
     if (confirm("Are you sure to confirm?")) {
-      if (this.createMode) {
-        this.advertService.addAdvert(this.advertForm.value);
+      if (!this.isAdmin) {
+        this.advertService
+          .getAdvert(this.advertID)
+          .applicants.push(this.userService.getUser(this.currentUserID));
       } else {
-        this.advertService.updateAdvert(this.advertID, this.advertForm.value);
+        if (this.createMode) {
+          this.advertService.addAdvert(this.advertForm.value);
+        } else {
+          this.advertService.updateAdvert(this.advertID, this.advertForm.value);
+        }
       }
-
       this.router.navigate(["/adverts"]);
     }
   }
-
   onClickCancel() {
     if (confirm("Are you really going to cancel?")) {
       this.router.navigate(["../"], { relativeTo: this.route });
@@ -86,17 +95,16 @@ export class AdvertComponent implements OnInit, OnDestroy {
   }
   onClickDelete() {
     console.log(this.advertService.getAdverts());
-
     if (confirm("Are you sure to delete this advert?")) {
       this.advertService.deleteAdvert(this.advertID);
       this.router.navigate(["../"], { relativeTo: this.route });
     }
     console.log(this.advertService.getAdverts());
   }
-
   onContentChanged(event) {
-    if (event.editor.getLength() > this.maxLength) {
-      event.editor.deleteText(this.maxLength, event.editor.getLength());
+    let maxLength: number = 250;
+    if (event.editor.getLength() > maxLength) {
+      event.editor.deleteText(maxLength, event.editor.getLength());
     }
   }
 
@@ -132,6 +140,8 @@ export class AdvertComponent implements OnInit, OnDestroy {
       jobImgPath = advert.photoUrl;
     }
 
+    this.photoUrl = jobImgPath;
+
     this.advertForm = new FormGroup({
       name: new FormControl(jobName, Validators.required), // Validators
       summary: new FormControl(jobSummary, Validators.required),
@@ -150,6 +160,7 @@ export class AdvertComponent implements OnInit, OnDestroy {
       province: new FormControl(jobProvince, Validators.required),
       district: new FormControl(jobDistrcit, Validators.required),
       jobDefinition: new FormControl(jobDesc, Validators.required),
+      photoUrl: new FormControl(jobImgPath),
       // PhotoURL de eklenmeli
     });
 
@@ -161,7 +172,12 @@ export class AdvertComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.loginSubs.unsubscribe();
   }
-
+  isQuillEditorEmpty() {
+    return this.advertForm.get("jobDefinition").value === null;
+  }
+  getQuillEditorLength() {
+    return this.advertForm.get("jobDefinition").value.length;
+  }
   getProvinces() {
     return this.locationService.getProvinces();
   }
