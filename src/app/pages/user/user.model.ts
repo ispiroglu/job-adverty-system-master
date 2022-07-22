@@ -7,6 +7,7 @@ export class User {
     public email: string,
     public phoneNumber: string,
     public province: string,
+    public provinceID: number,
     public district: string,
     public experience: number,
     public aboutUser: string

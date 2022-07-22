@@ -185,12 +185,11 @@
                   class="col-sm-12 form-control"
                   formControlName="province"
                   #province
-                  [(ngModel)]="selectedProvinceID"
                 >
                   <option value="">Please select province</option>
                   <option
                     *ngFor="let province of getProvinces()"
-                    [ngValue]="province.il"
+                    value="{{ province.plaka }}"
                   >
                     {{ province.il }}
                   </option>
@@ -206,7 +205,7 @@
                   <option value="">Please select district</option>
                   <option
                     *ngFor="let district of getDistricts()"
-                    [value]="district"
+                    value="{{ district }}"
                   >
                     {{ district }}
                   </option>

@@ -6,15 +6,9 @@ import {
   Input,
   OnInit,
   ViewChild,
-  ViewEncapsulation,
 } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { LocationService } from "app/shared/locationJson/location-json.service";
-import {
-  NgxExtendedPdfViewerModule,
-  NgxExtendedPdfViewerService,
-  pdfDefaultOptions,
-} from "ngx-extended-pdf-viewer";
 import { User } from "./user.model";
 
 import { UserService } from "./user.service";
@@ -25,7 +19,7 @@ import { UserService } from "./user.service";
   templateUrl: "user.component.html",
   styles: [],
 })
-export class UserComponent implements OnInit, AfterContentInit {
+export class UserComponent implements OnInit {
   editMode = true;
   userID: number;
   @ViewChild("province", { static: false }) provinceList: ElementRef;
@@ -56,12 +50,6 @@ export class UserComponent implements OnInit, AfterContentInit {
     }
     console.log(this.userForm.value);
   }
-  ngAfterContentInit() {
-    this.userForm.patchValue({ province: "Ankara" });
-    console.log("----------------------------------");
-    console.log(this.userForm.value);
-    console.log("----------------------------------");
-  }
 
   onClickSubmit() {}
 
@@ -72,7 +60,7 @@ export class UserComponent implements OnInit, AfterContentInit {
     let email = "";
     let phoneNumber = "";
     let district = "";
-    let province = "";
+    let provinceID: number;
     let experience: number = 0;
     let aboutUser = "";
 
@@ -84,7 +72,7 @@ export class UserComponent implements OnInit, AfterContentInit {
       gender = this.user.gender;
       email = this.user.email;
       phoneNumber = this.user.phoneNumber;
-      province = this.user.province;
+      provinceID = this.user.provinceID;
       district = this.user.district;
       experience = this.user.experience;
       aboutUser = this.user.aboutUser;
@@ -93,24 +81,23 @@ export class UserComponent implements OnInit, AfterContentInit {
     this.userForm = new FormGroup({
       firstname: new FormControl(firstname, Validators.required),
       lastname: new FormControl(lastname, Validators.required),
-      gender: new FormControl(gender, Validators.required),
+      gender: new FormControl(gender.toLocaleLowerCase(), Validators.required),
       email: new FormControl(email, Validators.required),
       phoneNumber: new FormControl(phoneNumber, Validators.required),
-      province: new FormControl(province, Validators.required),
+      province: new FormControl(provinceID, Validators.required),
       district: new FormControl(district, Validators.required),
       experience: new FormControl(experience, Validators.required),
       aboutUser: new FormControl(aboutUser, Validators.required),
     });
-
-    console.log(this.userForm.get("province").value);
   }
   getProvinces() {
     return this.locationService.getProvinces();
   }
   getDistricts() {
-    if (this.selectedProvinceID) {
-      return this.locationService.getProvinces()[this.selectedProvinceID - 1]
-        .ilceleri;
+    if (this.userForm.get("province").value) {
+      return this.locationService.getProvinces()[
+        this.userForm.get("province").value
+      ].ilceleri;
     }
   }
 }

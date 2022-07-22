@@ -10,7 +10,7 @@ import {
 } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { ActivatedRoute, Params, Router } from "@angular/router";
-import { AdvertService } from "app/adverts/advert.service";
+import { AdvertService } from "app/pages/adverts/advert/advert.service";
 import { User } from "app/pages/user/user.model";
 import { UserService } from "app/pages/user/user.service";
 import { AuthService } from "app/shared/auth.service";
@@ -114,7 +114,7 @@ export class AdvertComponent implements OnInit, OnDestroy {
     let jobImgPath = "";
     let jobStartDate = new Date().toDateString();
     let jobEndDate = new Date().toDateString();
-    let jobProvince = "";
+    let jobProvinceID: number;
     let jobDistrcit = "";
     let jobPosition = "";
     let jobDesc = "";
@@ -133,7 +133,7 @@ export class AdvertComponent implements OnInit, OnDestroy {
       jobEndDate = advert.endDate;
       jobCompanyName = advert.companyName;
       jobDepartment = advert.department;
-      jobProvince = advert.province;
+      jobProvinceID = advert.provinceID;
       jobDistrcit = advert.district;
       jobPosition = advert.position;
       jobDesc = advert.jobDefinition;
@@ -157,7 +157,7 @@ export class AdvertComponent implements OnInit, OnDestroy {
         formatDate(jobEndDate, "yyyy-MM-dd", "en"),
         Validators.required
       ),
-      province: new FormControl(jobProvince, Validators.required),
+      province: new FormControl(jobProvinceID, Validators.required),
       district: new FormControl(jobDistrcit, Validators.required),
       jobDefinition: new FormControl(jobDesc, Validators.required),
       photoUrl: new FormControl(jobImgPath),
@@ -182,9 +182,10 @@ export class AdvertComponent implements OnInit, OnDestroy {
     return this.locationService.getProvinces();
   }
   getDistricts() {
-    if (this.selectedProvinceID) {
-      return this.locationService.getProvinces()[this.selectedProvinceID - 1]
-        .ilceleri;
+    if (this.advertForm.get("province").value) {
+      return this.locationService.getProvinces()[
+        this.advertForm.get("province").value
+      ].ilceleri;
     }
   }
 }

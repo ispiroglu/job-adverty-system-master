@@ -122,13 +122,10 @@
         id="province"
         class="col-sm-12 form-control"
         formControlName="province"
-        #province
-        [(ngModel)]="selectedProvinceID"
       >
-        <option value="">Please select province</option>
         <option
           *ngFor="let province of getProvinces()"
-          [value]="province.plaka"
+          value="{{ province.plaka }}"
         >
           {{ province.il }}
         </option>
@@ -137,14 +134,11 @@
     <span class="col-sm-6 col-xs-12">
       <label for="district">District</label>
       <select
-        name="district"
-        id="district"
         class="col-sm-12 form-control"
         formControlName="district"
         #district
       >
-        <option value="">Please select district</option>
-        <option *ngFor="let district of getDistricts()" [value]="district">
+        <option *ngFor="let district of getDistricts()" value="{{ district }}">
           {{ district }}
         </option>
       </select>

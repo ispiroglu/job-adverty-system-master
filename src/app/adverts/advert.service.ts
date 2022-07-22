@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Advert } from "app/pages/adverts/advert.model";
 import { UserService } from "app/pages/user/user.service";
-import { Applicant } from "app/shared/applicant/applicant.model";
 import { Subject } from "rxjs";
 
 @Injectable({
@@ -20,8 +19,9 @@ export class AdvertService {
       department: "IT",
       capacity: 10,
       applications: 6,
-      district: "REMOTE",
-      province: "REMOTE",
+      district: "Remote",
+      province: "Remote",
+      provinceID: 0,
       jobDefinition:
         "This is a very long text that describes the definition of advert zero",
       isOpen: true,
@@ -40,8 +40,9 @@ export class AdvertService {
       department: "IT",
       capacity: 10,
       applications: 7,
-      district: "REMOTE",
-      province: "REMOTE",
+      district: "Remote",
+      province: "Remote",
+      provinceID: 0,
       jobDefinition:
         "This is a very long text that describes the definition of advert one",
       isOpen: true,
@@ -60,8 +61,9 @@ export class AdvertService {
       department: "IT",
       capacity: 10,
       applications: 3,
-      district: "REMOTE",
-      province: "REMOTE",
+      district: "Remote",
+      province: "Remote",
+      provinceID: 0,
       jobDefinition:
         "This is a very long text that describes the definition of advert Two",
       isOpen: true,
@@ -86,8 +88,9 @@ export class AdvertService {
         applications: 3,
         companyName: "LC Waikiki",
         department: "IT",
-        district: "REMOTE",
-        province: "REMOTE",
+        district: "Remote",
+        province: "Remote",
+        provinceID: 0,
         jobDefinition:
           "This is a very long text that describes the definition of advert Dummy",
         isOpen: true,
@@ -113,6 +116,7 @@ export class AdvertService {
   }
   updateAdvert(id: number, newAdvert: Advert) {
     // Applicant list should come together.
+    newAdvert.id = id;
     newAdvert.isOpen = true;
     newAdvert.applicants = this.adverts[id].applicants;
     this.adverts[id] = newAdvert;

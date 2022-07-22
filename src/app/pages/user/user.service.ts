@@ -17,8 +17,9 @@ export class UserService {
           "Male",
           "evrenn.ispiroglu@gmail.com",
           "5427261042",
-          "Istanbul",
-          "Sisli",
+          "İstanbul",
+          34,
+          "Şişli",
           5,
           "This is about user section"
         )

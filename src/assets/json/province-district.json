@@ -1,4 +1,10 @@
-[
+[{
+  "il": "Remote",
+  "plaka": 0,
+  "ilceleri": [
+    "Remote"
+  ]
+},
   {
     "il": "Adana",
     "plaka": 1,

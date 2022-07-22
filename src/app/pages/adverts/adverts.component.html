@@ -52,7 +52,12 @@
         <i class="fa fa-location-arrow mr-1" aria-hidden="true"></i>
         <label for="province"> Province</label>
         <select name="province" id="province" class="form-control" #province>
-          <option value="">Please select province</option>
+          <option
+            *ngFor="let province of getProvinces()"
+            value="{{ province.il }}"
+          >
+            {{ province.il }}
+          </option>
         </select>
       </span>
       <span class="col-md-2 mt-2">

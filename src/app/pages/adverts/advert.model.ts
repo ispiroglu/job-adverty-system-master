@@ -12,6 +12,7 @@ export class Advert {
     public applications: number,
     public district: string,
     public province: string,
+    public provinceID: number,
     public jobDefinition: string,
     public isOpen: boolean,
     public photoUrl: string,

@@ -12,8 +12,6 @@ import {
   ModalDismissReasons,
   NgbActiveModal,
 } from "@ng-bootstrap/ng-bootstrap";
-import { AdvertService } from "app/adverts/advert.service";
-import { UserComponent } from "app/pages/user/user.component";
 import { User } from "app/pages/user/user.model";
 import { UserService } from "app/pages/user/user.service";
 import * as XLSX from "xlsx";

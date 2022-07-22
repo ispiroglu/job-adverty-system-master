@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { AdvertService } from "app/adverts/advert.service";
+import { AdvertService } from "app/pages/adverts/advert/advert.service";
 import { AdvertProvinceFilter } from "app/shared/advert-province-filter.pipe";
 import { AdvertSearchFilter } from "app/shared/advert-search-filter.pipe";
 import { AuthService } from "app/shared/auth.service";
