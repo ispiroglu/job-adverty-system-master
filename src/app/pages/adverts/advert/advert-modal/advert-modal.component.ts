@@ -34,6 +34,7 @@ export class UserModal implements OnInit {
   onClickAccept() {
     this.advertService.removeApplicant(this.advertID, this.applicant)
     this.onClickCancel()
+
   }
   onClickReject() {
     this.onClickAccept()

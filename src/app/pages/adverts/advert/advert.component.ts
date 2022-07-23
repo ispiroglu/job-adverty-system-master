@@ -77,12 +77,11 @@ export class AdvertComponent implements OnInit, OnDestroy {
   onSubmit() {
     if (confirm("Are you sure to confirm?")) {
       if (!this.isAdmin) {
-
-        console.log((this.currentUserID))
         this.advertService
           .getAdvert(this.advertID)
           .applicants.push(this.userService.getUser(this.currentUserID));
       } else {
+        this.advertForm.patchValue({'province': this.locationService.getProvinces()[this.advertForm.get('provinceID').value].il})
         if (this.createMode) {
           this.advertService.addAdvert(this.advertForm.value);
         } else {
@@ -98,12 +97,10 @@ export class AdvertComponent implements OnInit, OnDestroy {
     }
   }
   onClickDelete() {
-    console.log(this.advertService.getAdverts());
     if (confirm("Are you sure to delete this advert?")) {
       this.advertService.deleteAdvert(this.advertID);
       this.router.navigate(["../"], { relativeTo: this.route });
     }
-    console.log(this.advertService.getAdverts());
   }
   onContentChanged(event) {
     const maxLength = 250;
@@ -119,6 +116,7 @@ export class AdvertComponent implements OnInit, OnDestroy {
     let jobStartDate = new Date().toDateString();
     let jobEndDate = new Date().toDateString();
     let jobProvinceID: number;
+    let jobProvince = ""
     let jobDistrcit = "";
     let jobPosition = "";
     let jobDesc = "";
@@ -138,6 +136,7 @@ export class AdvertComponent implements OnInit, OnDestroy {
       jobCompanyName = advert.companyName;
       jobDepartment = advert.department;
       jobProvinceID = advert.provinceID;
+      jobProvince = advert.province;
       jobDistrcit = advert.district;
       jobPosition = advert.position;
       jobDesc = advert.jobDefinition;
@@ -161,7 +160,8 @@ export class AdvertComponent implements OnInit, OnDestroy {
         formatDate(jobEndDate, "yyyy-MM-dd", "en"),
         Validators.required
       ),
-      province: new FormControl(jobProvinceID, Validators.required),
+      provinceID: new FormControl(jobProvinceID, Validators.required),
+      province: new FormControl(jobProvince, Validators.required),
       district: new FormControl(jobDistrcit, Validators.required),
       jobDefinition: new FormControl(jobDesc, Validators.required),
       photoUrl: new FormControl(jobImgPath),
@@ -186,9 +186,9 @@ export class AdvertComponent implements OnInit, OnDestroy {
     return this.locationService.getProvinces();
   }
   getDistricts() {
-    if (this.advertForm.get("province").value) {
+    if (this.advertForm.get("provinceID").value) {
       return this.locationService.getProvinces()[
-        this.advertForm.get("province").value
+        this.advertForm.get("provinceID").value
       ].ilceleri;
     }
   }

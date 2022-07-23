@@ -8,6 +8,7 @@ import { IconsComponent } from "../../pages/icons/icons.component";
 import { AdvertsComponent } from "../../pages/adverts/adverts.component";
 import { UpgradeComponent } from "../../pages/upgrade/upgrade.component";
 import { AdvertComponent } from "app/pages/adverts/advert/advert.component";
+import { AuthComponent } from "app/auth/auth.component";
 
 export const AdminLayoutRoutes: Routes = [
   { path: "dashboard", component: DashboardComponent },
@@ -28,4 +29,5 @@ export const AdminLayoutRoutes: Routes = [
     ],
   },
   { path: "upgrade", component: UpgradeComponent },
+  { path: "auth", component: AuthComponent },
 ];

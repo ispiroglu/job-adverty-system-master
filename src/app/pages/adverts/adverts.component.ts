@@ -72,8 +72,6 @@ export class AdvertsComponent implements OnInit {
     // Should recover adverts
   }
   getProvinces() {
-    return this.locationService.getProvinces().map((province) => {
-      return province.il;
-    });
+    return this.locationService.getProvinces();
   }
 }

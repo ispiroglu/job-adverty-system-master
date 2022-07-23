@@ -3,7 +3,7 @@
     Adverts
     <span class="justify-content-right">
       <button class="btn btn-primary" (click)="onClickToggleLog()">
-        Toggle Log
+        Toggle Login
       </button>
     </span>
   </span>
@@ -54,7 +54,7 @@
         <select name="province" id="province" class="form-control" #province>
           <option
             *ngFor="let province of getProvinces()"
-            value="{{ province.il }}"
+            value="{{ province.plaka }}"
           >
             {{ province.il }}
           </option>
@@ -75,6 +75,7 @@
     </div>
   </span>
 </div>
+
 
 <div class="row justify-content-center">
   <span

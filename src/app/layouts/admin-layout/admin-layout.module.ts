@@ -22,6 +22,9 @@ import { PdfViewerModule } from "ng2-pdf-viewer";
 import { NgxExtendedPdfViewerModule } from "ngx-extended-pdf-viewer";
 import { MatDialogModule } from "@angular/material/dialog";
 import { UserModal } from "app/pages/adverts/advert/advert-modal/advert-modal.component";
+import { AuthComponent } from "app/auth/auth.component";
+import { HttpClientModule } from "@angular/common/http";
+import { LoadingSpinnerComponent } from "app/shared/loading-spinner/loading-spinner.component";
 
 @NgModule({
   imports: [
@@ -48,6 +51,8 @@ import { UserModal } from "app/pages/adverts/advert/advert-modal/advert-modal.co
     AdvertDepartmentFilter,
     AdvertPositionFilter,
     UserModal,
+    AuthComponent,
+    LoadingSpinnerComponent,
   ],
 })
 export class AdminLayoutModule {}

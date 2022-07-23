@@ -121,7 +121,7 @@
         name="province"
         id="province"
         class="col-sm-12 form-control"
-        formControlName="province"
+        formControlName="provinceID"
       >
         <option
           *ngFor="let province of getProvinces()"
@@ -138,7 +138,7 @@
         formControlName="district"
         #district
       >
-        <option *ngFor="let district of getDistricts()" value="{{ district }}">
+        <option selected *ngFor="let district of getDistricts()" value="{{ district }}">
           {{ district }}
         </option>
       </select>
