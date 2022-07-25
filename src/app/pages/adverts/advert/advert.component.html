@@ -3,7 +3,7 @@
     <img
       [(src)]="photoUrl"
       class="form-control"
-      style="max-height: 200px; object-fit: cover"
+      style="max-height: 200px; object-fit: contain"
     />
     <!-- Need to store photoUrl -->
   </span>
@@ -138,7 +138,11 @@
         formControlName="district"
         #district
       >
-        <option selected *ngFor="let district of getDistricts()" value="{{ district }}">
+        <option
+          selected
+          *ngFor="let district of getDistricts()"
+          value="{{ district }}"
+        >
           {{ district }}
         </option>
       </select>
