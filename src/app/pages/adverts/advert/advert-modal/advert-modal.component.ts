@@ -1,14 +1,8 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  ViewEncapsulation,
-} from "@angular/core";
-import {
-  NgbActiveModal,
-} from "@ng-bootstrap/ng-bootstrap";
+import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
+import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { User } from "app/pages/user/user.model";
-import {AdvertService} from '../advert.service';
+import { UserService } from "app/pages/user/user.service";
+import { AdvertService } from "../advert.service";
 
 @Component({
   selector: "app-advert-modal",
@@ -23,21 +17,25 @@ export class UserModal implements OnInit {
   @Input() applicant: User;
   @Input() advertID: number;
 
-
-  constructor(private activeModal: NgbActiveModal,
-              private advertService: AdvertService) {}
+  constructor(
+    private activeModal: NgbActiveModal,
+    private userService: UserService,
+    private advertService: AdvertService
+  ) {}
   ngOnInit(): void {
     console.log(this.inModal);
     console.log(this.applicant);
   }
 
   onClickAccept() {
-    this.advertService.removeApplicant(this.advertID, this.applicant)
-    this.onClickCancel()
-
+    this.userService.acceptUserApplication(this.applicant.id, this.advertID);
+    this.advertService.removeApplicant(this.advertID, this.applicant);
+    this.onClickCancel();
   }
   onClickReject() {
-    this.onClickAccept()
+    this.userService.rejectUserApplication(this.applicant.id, this.advertID);
+    this.advertService.removeApplicant(this.advertID, this.applicant);
+    this.onClickCancel();
   }
   onClickCancel() {
     this.activeModal.dismiss();

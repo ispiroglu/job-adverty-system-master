@@ -80,8 +80,17 @@ export class AdvertComponent implements OnInit, OnDestroy {
         this.advertService
           .getAdvert(this.advertID)
           .applicants.push(this.userService.getUser(this.currentUserID));
+        this.userService.addAdvertToUserApplications(
+          this.userService.getCurrentUserID(),
+          this.advertID
+        );
       } else {
-        this.advertForm.patchValue({'province': this.locationService.getProvinces()[this.advertForm.get('provinceID').value].il})
+        this.advertForm.patchValue({
+          province:
+            this.locationService.getProvinces()[
+              this.advertForm.get("provinceID").value
+            ].il,
+        });
         if (this.createMode) {
           this.advertService.addAdvert(this.advertForm.value);
         } else {
@@ -116,7 +125,7 @@ export class AdvertComponent implements OnInit, OnDestroy {
     let jobStartDate = new Date().toDateString();
     let jobEndDate = new Date().toDateString();
     let jobProvinceID: number;
-    let jobProvince = ""
+    let jobProvince = "";
     let jobDistrcit = "";
     let jobPosition = "";
     let jobDesc = "";

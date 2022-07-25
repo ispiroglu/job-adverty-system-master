@@ -18,6 +18,12 @@ export const ROUTES: RouteInfo[] = [
 
   { path: "/user", title: "User", icon: "nc-single-02", class: "" },
   { path: "/auth", title: "Authenticate", icon: "nc-key-25", class: "" },
+  {
+    path: "/myApplications",
+    title: "Applications",
+    icon: "nc-paper",
+    class: "",
+  },
 ];
 
 @Component({

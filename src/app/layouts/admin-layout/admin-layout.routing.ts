@@ -9,6 +9,7 @@ import { AdvertsComponent } from "../../pages/adverts/adverts.component";
 import { UpgradeComponent } from "../../pages/upgrade/upgrade.component";
 import { AdvertComponent } from "app/pages/adverts/advert/advert.component";
 import { AuthComponent } from "app/auth/auth.component";
+import { ApplicationsComponent } from "app/pages/applications/applications.component";
 
 export const AdminLayoutRoutes: Routes = [
   { path: "dashboard", component: DashboardComponent },
@@ -30,4 +31,5 @@ export const AdminLayoutRoutes: Routes = [
   },
   { path: "upgrade", component: UpgradeComponent },
   { path: "auth", component: AuthComponent },
+  { path: "myApplications", component: ApplicationsComponent },
 ];

@@ -25,6 +25,7 @@ import { UserModal } from "app/pages/adverts/advert/advert-modal/advert-modal.co
 import { AuthComponent } from "app/auth/auth.component";
 import { HttpClientModule } from "@angular/common/http";
 import { LoadingSpinnerComponent } from "app/shared/loading-spinner/loading-spinner.component";
+import { ApplicationsComponent } from "app/pages/applications/applications.component";
 
 @NgModule({
   imports: [
@@ -53,6 +54,7 @@ import { LoadingSpinnerComponent } from "app/shared/loading-spinner/loading-spin
     UserModal,
     AuthComponent,
     LoadingSpinnerComponent,
+    ApplicationsComponent,
   ],
 })
 export class AdminLayoutModule {}

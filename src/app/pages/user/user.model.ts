@@ -1,3 +1,5 @@
+import { ApplicationDetail } from "app/shared/application/application.model";
+
 export class User {
   constructor(
     public id: number,
@@ -10,6 +12,7 @@ export class User {
     public provinceID: number,
     public district: string,
     public experience: number,
-    public aboutUser: string
+    public aboutUser: string,
+    public applicationsDetails: ApplicationDetail[]
   ) {}
 }
