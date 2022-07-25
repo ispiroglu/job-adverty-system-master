@@ -19,6 +19,7 @@ import { TableComponent } from "./pages/adverts/advert/table/table.component";
 import { AuthComponent } from "./auth/auth.component";
 import { AuthService } from "./auth/auth.service";
 import { HttpClient, HttpClientModule } from "@angular/common/http";
+import { DatePipe } from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -43,7 +44,7 @@ import { HttpClient, HttpClientModule } from "@angular/common/http";
 
     HttpClientModule,
   ],
-  providers: [],
+  providers: [DatePipe],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
