@@ -91,7 +91,7 @@
     style="padding: 16px"
   >
     <!-- Pipes will change -->
-    <span class="card card-stats text-right" style="height: 20 vh">
+    <span class="card card-stats text-right" style="height: 15 vh">
       <span class="card-body row">
         <span class="col-md-4 col-xs-12">
           <img
@@ -120,13 +120,12 @@
         <span class="row stats" style="justify-content: space-evenly">
           <button
             type="button"
-            class="btn btn-link col-md-2 col-xs-12"
-            style="display: flex; align-items: stretch; justify-content: center"
+            class="btn btn-link col-md-3 col-xs-12"
             (click)="onClickApply(advert.id)"
           >
             <i *ngIf="isAdmin" class="fa fa-pencil"></i>
             <i *ngIf="!isAdmin" class="fa fa-handshake-o"></i>
-            {{ isAdmin ? "Edit" : "Apply" }}
+            <p>{{ isAdmin ? "Edit" : "Apply" }}</p>
           </button>
           <p class="col-md-8 col-xs-12" style="text-align: end">
             {{ advert.district }} / {{ advert.province }}
