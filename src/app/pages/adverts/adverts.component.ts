@@ -48,8 +48,6 @@ export class AdvertsComponent implements OnInit {
     });
   }
 
-  updateAdvert() {}
-
   onClickApply(id: number) {
     if (this.isAdmin) {
       this.router.navigate([`${id}/edit`], { relativeTo: this.route });
@@ -64,13 +62,7 @@ export class AdvertsComponent implements OnInit {
     this.authService.toggleLoggedIn();
     console.log(this.getProvinces());
   }
-  onClickFilter() {
-    const provinceFilter = new AdvertProvinceFilter();
-    const searchFilter = new AdvertSearchFilter();
-
-    // this.activeAdverts = provinceFilter.transform(this)
-    // Should recover adverts
-  }
+  onClickFilter() {}
   getProvinces() {
     return this.locationService.getProvinces();
   }

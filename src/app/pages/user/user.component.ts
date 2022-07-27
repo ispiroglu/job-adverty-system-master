@@ -1,14 +1,9 @@
-import {
-  AfterContentChecked,
-  AfterContentInit,
-  Component,
-  ElementRef,
-  Input,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { ConfirmationPopupService } from "app/shared/confirmation-popup/confirmation-popup.service";
 import { LocationService } from "app/shared/locationJson/location-json.service";
+import { UserModal } from "../adverts/advert/advert-modal/advert-modal.component";
 import { User } from "./user.model";
 
 import { UserService } from "./user.service";
@@ -17,7 +12,14 @@ import { UserService } from "./user.service";
   selector: "user-cmp",
   moduleId: module.id,
   templateUrl: "user.component.html",
-  styleUrls: ["user.component.scss"]
+  styleUrls: ["user.component.scss"],
+  styles: [
+    `
+      .modal-backdrop.modal-index {
+        z-index: 1031 !important;
+      }
+    `,
+  ],
 })
 export class UserComponent implements OnInit {
   editMode = true;
@@ -28,7 +30,8 @@ export class UserComponent implements OnInit {
   userForm: FormGroup;
   constructor(
     private userService: UserService,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private confirmationPopupService: ConfirmationPopupService
   ) {
     this.userID = 1;
   }
@@ -40,10 +43,15 @@ export class UserComponent implements OnInit {
   }
 
   onClickSubmit() {
-    if (confirm("Are you sure about updating your profile?")) {
-      this.userService.updateUser(this.userForm.value, this.userID)
-      this.user = this.userForm.value;
-    }
+    this.confirmationPopupService.confirm(
+      "Do you want to update your profile?",
+      this.updateUser.bind(this)
+    );
+  }
+
+  updateUser() {
+    this.user = this.userForm.value;
+    this.userService.updateUser(this.user, this.userID);
   }
 
   isFormValid() {
@@ -79,7 +87,7 @@ export class UserComponent implements OnInit {
       firstname: new FormControl(firstname, Validators.required),
       lastname: new FormControl(lastname, Validators.required),
       gender: new FormControl(gender.toLocaleLowerCase(), Validators.required),
-      email: new FormControl(email, Validators.required),
+      email: new FormControl(email, [Validators.required, Validators.email]),
       phoneNumber: new FormControl(phoneNumber, Validators.required),
       provinceID: new FormControl(provinceID, Validators.required),
       district: new FormControl(district, Validators.required),
@@ -88,7 +96,7 @@ export class UserComponent implements OnInit {
     });
   }
   onProvinceChange(data: any) {
-    console.log(data)
+    console.log(data);
   }
   getProvinces() {
     return this.locationService.getProvinces();

@@ -1,22 +1,10 @@
-import {
-  Component,
-  ElementRef,
-  Input,
-  OnInit,
-  ViewChild,
-  ViewEncapsulation,
-} from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
-import {
-  NgbModal,
-  ModalDismissReasons,
-  NgbActiveModal,
-} from "@ng-bootstrap/ng-bootstrap";
+import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { User } from "app/pages/user/user.model";
 import { UserService } from "app/pages/user/user.service";
 import * as XLSX from "xlsx";
 import { UserModal } from "../advert-modal/advert-modal.component";
-import {AdvertService} from '../advert.service';
+import { AdvertService } from "../advert.service";
 
 @Component({
   selector: "table-cmp",
@@ -26,9 +14,6 @@ import {AdvertService} from '../advert.service';
     `
       tr:hover {
         background-color: Rgb(230, 230, 230);
-      }
-      .dark-modal {
-        z-index: 2;
       }
       .modal-backdrop.modal-index {
         z-index: 1031 !important;
@@ -44,7 +29,6 @@ export class TableComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private userService: UserService,
     private advertService: AdvertService
   ) {}
   ngOnInit() {

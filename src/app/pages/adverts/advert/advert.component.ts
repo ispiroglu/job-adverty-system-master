@@ -2,7 +2,6 @@ import { formatDate } from "@angular/common";
 import {
   Component,
   ElementRef,
-  Input,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -11,9 +10,9 @@ import {
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { AdvertService } from "app/pages/adverts/advert/advert.service";
-import { User } from "app/pages/user/user.model";
 import { UserService } from "app/pages/user/user.service";
 import { AuthService } from "app/shared/auth.service";
+import { ConfirmationPopupService } from "app/shared/confirmation-popup/confirmation-popup.service";
 import { LocationService } from "app/shared/locationJson/location-json.service";
 import { Subscription } from "rxjs";
 
@@ -42,6 +41,7 @@ export class AdvertComponent implements OnInit, OnDestroy {
   advertID: number;
   selectedProvinceID: number;
   jobDefinition: string;
+  maxLength = 1000;
 
   quillEditorStyle = {
     height: "300px",
@@ -54,7 +54,8 @@ export class AdvertComponent implements OnInit, OnDestroy {
     private advertService: AdvertService,
     private authService: AuthService,
     private locationService: LocationService,
-    private userService: UserService
+    private userService: UserService,
+    private confirmationService: ConfirmationPopupService
   ) {}
 
   ngOnInit(): void {
@@ -75,7 +76,12 @@ export class AdvertComponent implements OnInit, OnDestroy {
     return this.advertForm.valid;
   }
   onSubmit() {
-    if (confirm("Are you sure to confirm?")) {
+    const confirmText = !this.isAdmin
+      ? "Do you really want to apply to this job? "
+      : this.createMode
+      ? "Do you really want to create this job? "
+      : "Do you really want to edit this job";
+    this.confirmationService.confirm(confirmText, () => {
       if (!this.isAdmin) {
         this.advertService
           .getAdvert(this.advertID)
@@ -98,23 +104,26 @@ export class AdvertComponent implements OnInit, OnDestroy {
         }
       }
       this.router.navigate(["/adverts"]);
-    }
+    });
   }
+
   onClickCancel() {
-    if (confirm("Are you really going to cancel?")) {
+    this.confirmationService.confirm("Are you really going to cancel?", () => {
       this.router.navigate(["../"], { relativeTo: this.route });
-    }
+    });
   }
   onClickDelete() {
-    if (confirm("Are you sure to delete this advert?")) {
-      this.advertService.deleteAdvert(this.advertID);
-      this.router.navigate(["../"], { relativeTo: this.route });
-    }
+    this.confirmationService.confirm(
+      "Are you sure to delete this advert?",
+      () => {
+        this.advertService.deleteAdvert(this.advertID);
+        this.router.navigate(["../"], { relativeTo: this.route });
+      }
+    );
   }
   onContentChanged(event) {
-    const maxLength = 250;
-    if (event.editor.getLength() > maxLength) {
-      event.editor.deleteText(maxLength, event.editor.getLength());
+    if (event.editor.getLength() > this.maxLength) {
+      event.editor.deleteText(this.maxLength, event.editor.getLength());
     }
   }
 

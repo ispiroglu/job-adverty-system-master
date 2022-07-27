@@ -117,7 +117,8 @@
               "node_modules/moment/moment.js",
               "node_modules/chartist/dist/chartist.js",
               "node_modules/bootstrap-notify/bootstrap-notify.js",
-              "node_modules/quill/dist/quill.min.js"
+              "node_modules/quill/dist/quill.min.js",
+              "node_modules/sweetalert2/dist/sweetalert2.js"
             ],
             "styles": [
               "src/styles.css",

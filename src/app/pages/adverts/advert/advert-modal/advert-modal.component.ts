@@ -22,10 +22,7 @@ export class UserModal implements OnInit {
     private userService: UserService,
     private advertService: AdvertService
   ) {}
-  ngOnInit(): void {
-    console.log(this.inModal);
-    console.log(this.applicant);
-  }
+  ngOnInit(): void {}
 
   onClickAccept() {
     this.userService.acceptUserApplication(this.applicant.id, this.advertID);

@@ -57,8 +57,7 @@ export class UserService {
   }
   updateUser(newUser: User, userID: number) {
     newUser.id = userID;
-    console.log(newUser.provinceID);
-    console.log(this.locationService.getProvinces()[0]);
+    newUser.applicationsDetails = this.users[userID].applicationsDetails;
     newUser.province =
       this.locationService.getProvinces()[newUser.provinceID].il;
     this.users[userID] = newUser;

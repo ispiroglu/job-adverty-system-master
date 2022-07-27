@@ -121,11 +121,27 @@
           <button
             type="button"
             class="btn btn-link col-md-3 col-xs-12"
+            style="width: auto"
             (click)="onClickApply(advert.id)"
           >
-            <i *ngIf="isAdmin" class="fa fa-pencil"></i>
-            <i *ngIf="!isAdmin" class="fa fa-handshake-o"></i>
-            <p>{{ isAdmin ? "Edit" : "Apply" }}</p>
+            <span
+              class="row"
+              style="justify-content: center; vertical-align: middle"
+            >
+              <i
+                *ngIf="isAdmin"
+                class="fa fa-pencil"
+                style="vertical-align: middle"
+              ></i>
+              <i
+                *ngIf="!isAdmin"
+                class="fa fa-handshake-o"
+                style="vertical-align: middle"
+              ></i>
+              <p style="vertical-align: middle">
+                {{ isAdmin ? "Edit" : "Apply" }}
+              </p></span
+            >
           </button>
           <p class="col-md-8 col-xs-12" style="text-align: end">
             {{ advert.district }} / {{ advert.province }}

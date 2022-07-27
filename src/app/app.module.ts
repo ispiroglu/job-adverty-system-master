@@ -16,9 +16,7 @@ import { AdvertComponent } from "./pages/adverts/advert/advert.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { QuillModule } from "ngx-quill";
 import { TableComponent } from "./pages/adverts/advert/table/table.component";
-import { AuthComponent } from "./auth/auth.component";
-import { AuthService } from "./auth/auth.service";
-import { HttpClient, HttpClientModule } from "@angular/common/http";
+import { HttpClientModule } from "@angular/common/http";
 import { DatePipe } from "@angular/common";
 
 @NgModule({

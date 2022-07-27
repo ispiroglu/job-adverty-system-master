@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Advert } from "app/pages/adverts/advert.model";
 import { UserService } from "app/pages/user/user.service";
 import { Subject } from "rxjs";
-import {User} from '../../user/user.model';
+import { User } from "../../user/user.model";
 
 @Injectable({
   providedIn: "root",
@@ -13,8 +13,8 @@ export class AdvertService {
       id: 0,
       name: "Advert Zero",
       summary: "This is the summary of advert zero",
-      startDate: "06/06/2022",
-      endDate: "06/06/2022",
+      startDate: "07//06/2022",
+      endDate: "07/30/2022",
       position: "INTERN",
       companyName: "LC Waikiki",
       department: "IT",
@@ -24,7 +24,7 @@ export class AdvertService {
       province: "İstanbul",
       provinceID: 34,
       jobDefinition:
-        "This is a very long text that describes the definition of advert zero",
+        "<h1>This is a very long text that describes the definition of advert zero</h1>",
       isOpen: true,
       photoUrl:
         "https://i.pinimg.com/originals/91/38/bf/9138bf7b781c8954841e6ea7757e51cb.png",
@@ -34,8 +34,8 @@ export class AdvertService {
       id: 1,
       name: "Advert One",
       summary: "This is the summary of advert One",
-      startDate: "06/06/2022",
-      endDate: "06/06/2022",
+      startDate: "07//07/2022",
+      endDate: "07/30/2022",
       position: "INTERN",
       companyName: "LC Waikiki",
       department: "IT",
@@ -55,8 +55,8 @@ export class AdvertService {
       id: 2,
       name: "Advert Two",
       summary: "This is the summary of advert Two",
-      startDate: "06/06/2022",
-      endDate: "06/06/2022",
+      startDate: "07//07/2022",
+      endDate: "07/30/2022",
       position: "INTERN",
       companyName: "LC Waikiki",
       department: "IT",
@@ -82,8 +82,8 @@ export class AdvertService {
         id: i,
         name: "Advert Dummy",
         summary: "This is the summary of advert Dummy",
-        startDate: "06/06/2022",
-        endDate: "07/07/2022",
+        startDate: "07/28/2022",
+        endDate: "08/15/2022",
         position: "INTERN",
         capacity: 10,
         applications: 3,
@@ -131,12 +131,12 @@ export class AdvertService {
     return this.adverts[id].applicants;
   }
   removeApplicant(id: number, applicant: User) {
-    const idxOfApplicant = this.adverts[id].applicants.indexOf(applicant)
-    console.log(idxOfApplicant)
+    const idxOfApplicant = this.adverts[id].applicants.indexOf(applicant);
+    console.log(idxOfApplicant);
     const demo = this.adverts[id].applicants.find((insideApplicant: User) => {
       return insideApplicant.email === applicant.email;
-    })
-    console.log(this.adverts[id].applicants.indexOf(demo))
+    });
+    console.log(this.adverts[id].applicants.indexOf(demo));
     this.adverts[id].applicants.splice(idxOfApplicant, 1);
   }
 }
