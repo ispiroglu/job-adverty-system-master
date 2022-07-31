@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ConfirmationPopupService } from "app/shared/confirmation-popup/confirmation-popup.service";
 import { LocationService } from "app/shared/locationJson/location-json.service";
+import { PdfViewerComponent } from "ng2-pdf-viewer";
 import { UserModal } from "../adverts/advert/advert-modal/advert-modal.component";
 import { User } from "./user.model";
 
@@ -22,6 +23,8 @@ import { UserService } from "./user.service";
   ],
 })
 export class UserComponent implements OnInit {
+  @ViewChild(PdfViewerComponent, { static: false })
+  private pdfComponent: PdfViewerComponent;
   editMode = true;
   userID: number;
   pdfSrc = "assets/json/EvrenIspiroglu_cv.pdf";
@@ -56,6 +59,10 @@ export class UserComponent implements OnInit {
 
   isFormValid() {
     return this.userForm.valid;
+  }
+
+  pageRendered() {
+    this.pdfComponent.pdfViewer.currentScaleValue = "page-fit";
   }
 
   initForm() {

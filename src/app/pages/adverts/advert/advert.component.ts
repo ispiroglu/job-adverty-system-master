@@ -43,6 +43,12 @@ export class AdvertComponent implements OnInit, OnDestroy {
   jobDefinition: string;
   maxLength = 1000;
 
+  uploadedImage: File;
+  dbImage: any;
+  postResponse: any;
+  successResponse: string;
+  image: any;
+
   quillEditorStyle = {
     height: "300px",
     backgroundColor: "#ffff",
@@ -189,6 +195,15 @@ export class AdvertComponent implements OnInit, OnDestroy {
       this.advertForm.disable();
       this.currentUserID = this.userService.getCurrentUserID();
     }
+  }
+
+  onImageUpload(event: any) {
+    this.uploadedImage = event.target.files[0];
+  }
+
+  onSelectFile(event: any) {
+    const imgFormData = new FormData();
+    imgFormData.append("image", this.uploadedImage, this.uploadedImage.name);
   }
 
   ngOnDestroy() {
