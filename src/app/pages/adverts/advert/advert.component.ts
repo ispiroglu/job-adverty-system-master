@@ -187,7 +187,10 @@ export class AdvertComponent implements OnInit, OnDestroy {
       provinceID: new FormControl(jobProvinceID, Validators.required),
       province: new FormControl(jobProvince, Validators.required),
       district: new FormControl(jobDistrcit, Validators.required),
-      jobDefinition: new FormControl(jobDesc, Validators.required),
+      jobDefinition: new FormControl(jobDesc, [
+        Validators.required,
+        Validators.minLength(20),
+      ]),
       photoUrl: new FormControl(jobImgPath),
     });
 
