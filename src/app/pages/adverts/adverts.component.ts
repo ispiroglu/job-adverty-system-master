@@ -6,6 +6,8 @@ import { AdvertSearchFilter } from "app/shared/advert-search-filter.pipe";
 import { AuthService } from "app/shared/auth.service";
 import { Advert } from "./advert.model";
 import { LocationService } from "app/shared/locationJson/location-json.service";
+import { AdvertCardModel } from "./shared/models/advert-card.model";
+import { DataService } from "app/shared/http/data.service";
 
 @Component({
   selector: "notifications-cmp",
@@ -23,15 +25,27 @@ export class AdvertsComponent implements OnInit {
   adverts: Advert[];
   activeAdverts: Advert[];
   jsonDataPath: string = "../../../assets/json/province.json";
+
+  theAdverts: AdvertCardModel[];
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private advertService: AdvertService,
     private authService: AuthService,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private dataService: DataService
   ) {}
 
   ngOnInit() {
+    this.dataService
+      .get<AdvertCardModel[]>("http://localhost:8080/api/v1/adverts")
+      .subscribe((response) => {
+        console.log(response.body);
+        this.theAdverts = JSON.parse(JSON.stringify(response.body));
+        console.log(this.theAdverts);
+      });
+    console.log("ASDASDASD");
+
     this.isAdmin = this.authService.loggedIn;
     this.advertService.advertsChanged.subscribe((newAdverts: Advert[]) => {
       this.adverts = newAdverts;

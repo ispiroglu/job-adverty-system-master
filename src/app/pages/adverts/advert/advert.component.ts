@@ -1,5 +1,6 @@
 import { formatDate } from "@angular/common";
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   OnDestroy,
@@ -10,11 +11,14 @@ import {
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { AdvertService } from "app/pages/adverts/advert/advert.service";
+import { AdvertInfoModel } from "app/pages/dashboard/models/advert-info.model";
 import { UserService } from "app/pages/user/user.service";
 import { AuthService } from "app/shared/auth.service";
 import { ConfirmationPopupService } from "app/shared/confirmation-popup/confirmation-popup.service";
+import { DataService } from "app/shared/http/data.service";
 import { LocationService } from "app/shared/locationJson/location-json.service";
 import { Subscription } from "rxjs";
+import { AdminAdvertInfo } from "../shared/models/admin-advert-info.model";
 
 interface Province {
   il: string;
@@ -27,7 +31,9 @@ interface Province {
   templateUrl: "./advert.component.html",
   styleUrls: ["./advert.component.scss"],
 })
-export class AdvertComponent implements OnInit, OnDestroy {
+export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
+  advert: AdminAdvertInfo;
+
   @ViewChild("province", { static: false }) provinceList: ElementRef;
   @ViewChild("district", { static: false }) districtList: ElementRef;
   @ViewChildren("userQuill") userQuill: ElementRef;
@@ -61,8 +67,10 @@ export class AdvertComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private locationService: LocationService,
     private userService: UserService,
-    private confirmationService: ConfirmationPopupService
+    private confirmationService: ConfirmationPopupService,
+    private dataService: DataService
   ) {}
+  ngAfterViewInit(): void {}
 
   ngOnInit(): void {
     this.isAdmin = this.authService.loggedIn;
@@ -71,13 +79,27 @@ export class AdvertComponent implements OnInit, OnDestroy {
         this.isAdmin = isAdmin;
       }
     );
-
     this.route.params.subscribe((params: Params) => {
       this.advertID = +params["id"];
       this.createMode = params["id"] === undefined;
-      this.initForm();
     });
+
+    this.initForm();
+
+    this.dataService
+      .get<AdminAdvertInfo>(
+        `http://localhost:8080/api/v1/adverts/${this.advertID}/adminView`
+      )
+      .subscribe((response) => {
+        console.log(31);
+
+        this.advert = JSON.parse(JSON.stringify(response.body));
+        console.log(this.advert);
+
+        this.pathForm();
+      });
   }
+
   isFormValid() {
     return this.advertForm.valid;
   }
@@ -148,27 +170,6 @@ export class AdvertComponent implements OnInit, OnDestroy {
     let jobCompanyName = "";
     let jobDepartment = "";
 
-    if (!this.createMode) {
-      const advert = this.advertService.getAdvert(this.advertID);
-
-      jobName = advert.name;
-      jobSummary = advert.summary;
-      jobImgPath = advert.photoUrl;
-      jobCapacity = advert.capacity;
-      jobStartDate = advert.startDate;
-      jobEndDate = advert.endDate;
-      jobCompanyName = advert.companyName;
-      jobDepartment = advert.department;
-      jobProvinceID = advert.provinceID;
-      jobProvince = advert.province;
-      jobDistrcit = advert.district;
-      jobPosition = advert.position;
-      jobDesc = advert.jobDefinition;
-      jobImgPath = advert.photoUrl;
-    }
-
-    this.photoUrl = jobImgPath;
-
     this.advertForm = new FormGroup({
       name: new FormControl(jobName, Validators.required), // Validators
       summary: new FormControl(jobSummary, Validators.required),
@@ -198,6 +199,23 @@ export class AdvertComponent implements OnInit, OnDestroy {
       this.advertForm.disable();
       this.currentUserID = this.userService.getCurrentUserID();
     }
+  }
+
+  pathForm() {
+    this.advertForm.patchValue({
+      name: this.advert.name,
+      summary: this.advert.summary,
+      position: this.advert.position,
+      capacity: this.advert.capacity,
+      companyName: this.advert.companyName,
+      department: this.advert.department,
+      startDate: formatDate(this.advert.startDate, "yyyy-MM-dd", "en"),
+      endDate: formatDate(this.advert.endDate, "yyyy-MM-dd", "en"),
+      provinceID: this.advert.provinceID,
+      province: this.advert.province,
+      district: this.advert.district,
+      jobDefinition: this.advert.jobDefinition,
+    });
   }
 
   onImageUpload(event: any) {
