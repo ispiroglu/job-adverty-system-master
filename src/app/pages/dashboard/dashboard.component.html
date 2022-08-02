@@ -38,7 +38,7 @@
             <div class="numbers">
               <p class="card-category">Total Advert Count</p>
               <p class="card-title">
-                {{ totalAdvertCount }}
+                {{ dashboardModel.totalAdvertCount }}
               </p>
             </div>
           </div>
@@ -62,7 +62,7 @@
           <div class="col-7 col-md-8">
             <div class="numbers">
               <p class="card-category">Total User Count</p>
-              <p class="card-title">{{ totalUserCount }}</p>
+              <p class="card-title">{{ dashboardModel.totalUserCount }}</p>
               <p></p>
             </div>
           </div>
@@ -85,8 +85,8 @@
           </div>
           <div class="col-7 col-md-8">
             <div class="numbers">
-              <p class="card-category">Total Visitor Count</p>
-              <p class="card-title">+45K</p>
+              <p class="card-category">Total Event Count</p>
+              <p class="card-title">{{ dashboardModel.totalEventCount }}</p>
               <p></p>
             </div>
           </div>
@@ -118,16 +118,16 @@
             </thead>
             <tbody>
               <tr
-                *ngFor="let advert of soonEndingAdverts"
+                *ngFor="let advert of dashboardModel.soonEndingAdverts"
                 data-toggle="tooltip"
                 data-placement="top"
                 data-delay='{ "show": 300, "hide": 100 }'
               >
                 <td>{{ advert.companyName }}</td>
-                <td>{{ advert.name }}</td>
+                <td>{{ advert.advertName }}</td>
                 <td>{{ advert.position }}</td>
                 <td>{{ advert.summary }}</td>
-                <td>{{ advert.province }}</td>
+                <td>{{ advert.location }}</td>
               </tr>
             </tbody>
           </table>
@@ -153,16 +153,16 @@
             </thead>
             <tbody>
               <tr
-                *ngFor="let advert of soonStartingAdverts"
+                *ngFor="let advert of dashboardModel.soonStartingAdverts"
                 data-toggle="tooltip"
                 data-placement="top"
                 data-delay='{ "show": 300, "hide": 100 }'
               >
                 <td>{{ advert.companyName }}</td>
-                <td>{{ advert.name }}</td>
+                <td>{{ advert.advertName }}</td>
                 <td>{{ advert.position }}</td>
                 <td>{{ advert.summary }}</td>
-                <td>{{ advert.province }}</td>
+                <td>{{ advert.location }}</td>
               </tr>
             </tbody>
           </table>
