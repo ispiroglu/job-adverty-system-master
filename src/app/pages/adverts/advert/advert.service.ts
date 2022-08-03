@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Advert } from "app/pages/adverts/advert.model";
 import { UserService } from "app/pages/user/user.service";
 import { Subject } from "rxjs";
-import { User } from "../../user/user.model";
+import { User } from "../../user/shared/model/user.model";
 
 @Injectable({
   providedIn: "root",

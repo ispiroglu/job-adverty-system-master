@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { User } from "./user.model";
+import { User } from "./shared/model/user.model";
 import { LocationService } from "../../shared/locationJson/location-json.service";
 import {
   AdvertStatus,
@@ -30,10 +30,10 @@ export class UserService {
           5,
           "This is about user section",
           [
-            new ApplicationDetail(0, AdvertStatus.Pending),
-            new ApplicationDetail(1, AdvertStatus.Pending),
-            new ApplicationDetail(6, AdvertStatus.Pending),
-            new ApplicationDetail(2, AdvertStatus.Pending),
+            new ApplicationDetail(0, AdvertStatus.PENDING),
+            new ApplicationDetail(1, AdvertStatus.PENDING),
+            new ApplicationDetail(6, AdvertStatus.PENDING),
+            new ApplicationDetail(2, AdvertStatus.PENDING),
           ]
         )
       );
@@ -67,18 +67,18 @@ export class UserService {
     const application = user.applicationsDetails.find(
       (application) => application.AdvertId === advertID
     );
-    application.status = AdvertStatus.Accept;
+    application.status = AdvertStatus.ACCEPT;
   }
   rejectUserApplication(userID: number, advertID: number) {
     const user = this.users[userID];
     const application = user.applicationsDetails.find(
       (application) => application.AdvertId === advertID
     );
-    application.status = AdvertStatus.Reject;
+    application.status = AdvertStatus.REJECT;
   }
   addAdvertToUserApplications(userID: number, advertID: number) {
     this.users[userID].applicationsDetails.push(
-      new ApplicationDetail(advertID, AdvertStatus.Pending)
+      new ApplicationDetail(advertID, AdvertStatus.PENDING)
     );
   }
 }

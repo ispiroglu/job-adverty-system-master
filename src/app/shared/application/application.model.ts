@@ -1,7 +1,7 @@
 export enum AdvertStatus {
-  Reject = "Rejected",
-  Accept = "Accepted",
-  Pending = "Pending",
+  REJECT = "REJECT",
+  ACCEPT = "ACCEPT",
+  PENDING = "PENDING",
 }
 export class ApplicationDetail {
   constructor(public AdvertId: number, public status: AdvertStatus) {}

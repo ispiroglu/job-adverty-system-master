@@ -20,8 +20,8 @@
             data-placement="top"
             data-delay='{ "show": 300, "hide": 100 }'
             [ngClass]="{
-              'table-danger': application.status === 'Rejected',
-              'table-success': application.status === 'Accepted'
+              'table-danger': application.status === 'REJECT',
+              'table-success': application.status === 'ACCEPT'
             }"
           >
             <td>{{ application.name }}</td>

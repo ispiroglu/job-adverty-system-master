@@ -14,6 +14,8 @@ export class BaseHttpService {
     /*
         file operation?
     */
+    console.log("Sending post")
+    console.log(data)
     return this.httpClient.post(requestUrl, data, {
       headers,
       observe: "response",
@@ -21,6 +23,7 @@ export class BaseHttpService {
   }
 
   httpPatch<T>(requestUrl: string = "", data: any, headers?: HttpHeaders) {
+    console.log("sending patch " + requestUrl)
     return this.httpClient.patch<T>(requestUrl, data, {
       headers,
       observe: "response",
@@ -35,6 +38,6 @@ export class BaseHttpService {
   }
 
   /*
-    GET HTTP HEADER? 
+    GET HTTP HEADER?
   */
 }

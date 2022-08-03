@@ -28,7 +28,7 @@
         <input
           type="text"
           class="form-control"
-          id="search-text"
+          id="department"
           aria-describedby="search-text"
           [(ngModel)]="selectedDepartment"
           placeholder="Enter the department"
@@ -41,7 +41,7 @@
         <input
           type="text"
           class="form-control"
-          id="search-text"
+          id="position"
           aria-describedby="search-text"
           [(ngModel)]="selectedPosition"
           placeholder="Enter the position"
@@ -89,7 +89,7 @@
       <span class="card-body row">
         <span class="col-md-4 col-xs-12">
           <img
-            src="{{ advert.image }}.blob"
+            src="{{ advert.imageURL }}"
             alt=""
             class="icon-big text-center icon-warning"
             style="

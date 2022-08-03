@@ -5,11 +5,15 @@ import { ConfirmationPopupService } from "app/shared/confirmation-popup/confirma
 import { LocationService } from "app/shared/locationJson/location-json.service";
 import { PdfViewerComponent } from "ng2-pdf-viewer";
 import { UserModal } from "../adverts/advert/advert-modal/advert-modal.component";
-import { User } from "./user.model";
+import { User } from "./shared/model/user.model";
 
 import { UserService } from "./user.service";
+import {DataService} from '../../shared/http/data.service';
+import {resourceChangeTicket} from '@angular/compiler-cli/src/ngtsc/core';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: "user-cmp",
   moduleId: module.id,
   templateUrl: "user.component.html",
@@ -27,22 +31,42 @@ export class UserComponent implements OnInit {
   private pdfComponent: PdfViewerComponent;
   editMode = true;
   userID: number;
-  pdfSrc = "assets/json/EvrenIspiroglu_cv.pdf";
+  pdfSrc: string;
+  photoSrc: string;
   user: User;
-  @Input() inModal = false;
+  @Input() inModal;
   userForm: FormGroup;
   constructor(
     private userService: UserService,
     private locationService: LocationService,
-    private confirmationPopupService: ConfirmationPopupService
+    private confirmationPopupService: ConfirmationPopupService,
+    private dataService: DataService,
+    private sanitizer: DomSanitizer
   ) {
-    this.userID = 1;
   }
   ngOnInit() {
     this.initForm();
     if (this.inModal) {
+      this.userID = this.inModal.id
       this.userForm.disable();
+    } else {
+      this.userID = 2;
     }
+    this.dataService.get<Blob>(`http://localhost:8080/api/v1/users/${this.userID}/photo`)
+      .subscribe((response) => {
+        this.photoSrc = 'data:image/jpeg;base64,' + JSON.parse(JSON.stringify(response.body));
+        this.sanitizer.bypassSecurityTrustUrl(this.photoSrc);
+      })
+    this.dataService.get<Blob>(`http://localhost:8080/api/v1/users/${this.userID}/cv`)
+      .subscribe((response) => {
+        this.pdfSrc = 'data:image/jpeg;base64,' + JSON.parse(JSON.stringify(response.body));
+        this.sanitizer.bypassSecurityTrustUrl(this.pdfSrc);
+      })
+    this.dataService.get<User>(`http://localhost:8080/api/v1/users/${this.userID}`)
+      .subscribe( (response) => {
+        this.user = response.body;
+        this.patchForm();
+      });
   }
 
   onClickSubmit() {
@@ -54,7 +78,11 @@ export class UserComponent implements OnInit {
 
   updateUser() {
     this.user = this.userForm.value;
-    this.userService.updateUser(this.user, this.userID);
+    this.user.province = this.locationService.getProvinces()[this.user.provinceID].il;
+    this.dataService.update<User>(this.user, `http://localhost:8080/api/v1/users/${this.userID}`)
+      .subscribe((response) => {
+        console.log(response)
+      })
   }
 
   isFormValid() {
@@ -66,29 +94,17 @@ export class UserComponent implements OnInit {
   }
 
   initForm() {
-    let firstname = "";
-    let lastname = "";
-    let gender = "";
-    let email = "";
-    let phoneNumber = "";
-    let district = "";
-    let provinceID: number;
-    let experience: number;
-    let aboutUser = "";
+    const firstname = "";
+    const  lastname = "";
+    const gender = "";
+    const email = "";
+    const phoneNumber = "";
+    const district = "";
+    const provinceID = 0;
+    const experience = 0;
+    const aboutUser = ""
 
-    this.user = this.userService.getUser(this.userID);
-
-    if (this.user) {
-      firstname = this.user.firstname;
-      lastname = this.user.lastname;
-      gender = this.user.gender;
-      email = this.user.email;
-      phoneNumber = this.user.phoneNumber;
-      provinceID = this.user.provinceID;
-      district = this.user.district;
-      experience = this.user.experience;
-      aboutUser = this.user.aboutUser;
-    }
+    // this.user = this.userService.getUser(this.userID);
 
     this.userForm = new FormGroup({
       firstname: new FormControl(firstname, Validators.required),
@@ -100,6 +116,19 @@ export class UserComponent implements OnInit {
       district: new FormControl(district, Validators.required),
       experience: new FormControl(experience, Validators.required),
       aboutUser: new FormControl(aboutUser, Validators.required),
+    });
+  }
+  patchForm() {
+    this.userForm.patchValue({
+      firstname: this.user.firstname,
+      lastname: this.user.lastname,
+      gender: this.user.gender.toLocaleLowerCase(),
+      email: this.user.email,
+      phoneNumber: this.user.phoneNumber,
+      provinceID: this.user.provinceID,
+      district: this.user.district,
+      experience: this.user.experience,
+      aboutUser: this.user.aboutUser,
     });
   }
   onProvinceChange(data: any) {

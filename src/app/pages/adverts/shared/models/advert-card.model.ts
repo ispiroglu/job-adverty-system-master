@@ -1,10 +1,11 @@
 export class AdvertCardModel {
   constructor(
-    private id: number,
-    private image: Blob,
-    private advertName: string,
-    private position: string,
-    private summary: string,
-    private location: string
+    public id: number,
+    public image: Blob,
+    public imageURL: string,
+    public advertName: string,
+    public position: string,
+    public summary: string,
+    public location: string
   ) {}
 }

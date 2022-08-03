@@ -1,10 +1,11 @@
 import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { User } from "app/pages/user/user.model";
-import { UserService } from "app/pages/user/user.service";
 import * as XLSX from "xlsx";
 import { UserModal } from "../advert-modal/advert-modal.component";
 import { AdvertService } from "../advert.service";
+import {DataService} from '../../../../shared/http/data.service';
+import {TableUserInfoModel} from './model/table-user-info.model';
+import {User} from '../../../user/shared/model/user.model';
 
 @Component({
   selector: "table-cmp",
@@ -25,23 +26,28 @@ import { AdvertService } from "../advert.service";
 export class TableComponent implements OnInit {
   closeResult = "";
   @Input() advertID: number;
-  applicants: User[];
+  applicants: TableUserInfoModel[];
 
   constructor(
     private modalService: NgbModal,
-    private advertService: AdvertService
+    private advertService: AdvertService,
+    private dataService: DataService
   ) {}
   ngOnInit() {
-    this.applicants = this.advertService.getAdvert(this.advertID).applicants; // Mock
+    // this.applicants = this.advertService.getAdvert(this.advertID).applicants; // Mock
+    this.dataService.get<TableUserInfoModel[]>(`http://localhost:8080/api/v1/adverts/${this.advertID}/applications`)
+      .subscribe( (response) => {
+        console.log(response)
+        this.applicants = response.body
+      })
   }
-  onClickApplicant(applicant: User) {
+  onClickApplicant(applicant: TableUserInfoModel) {
     const modalRef = this.modalService.open(UserModal, {
       size: "xl",
       scrollable: true,
       backdropClass: "modal-index",
     });
-    modalRef.componentInstance.applicant = applicant;
-    modalRef.componentInstance.inModal = true;
+    modalRef.componentInstance.inModal = {id: applicant.id};
     modalRef.componentInstance.advertID = this.advertID;
   }
   onClickExcelOutput() {

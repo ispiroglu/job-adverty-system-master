@@ -8,6 +8,9 @@ import { Advert } from "./advert.model";
 import { LocationService } from "app/shared/locationJson/location-json.service";
 import { AdvertCardModel } from "./shared/models/advert-card.model";
 import { DataService } from "app/shared/http/data.service";
+import {AdminAdvertInfo} from './shared/models/admin-advert-info.model';
+import {FilterModel} from './shared/models/filter.model';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: "notifications-cmp",
@@ -17,14 +20,14 @@ import { DataService } from "app/shared/http/data.service";
 export class AdvertsComponent implements OnInit {
   @ViewChild("province", { static: false }) provinceFilter: ElementRef;
 
-  selectedProvince: string;
-  searchText;
-  selectedDepartment: string;
-  selectedPosition: string;
+  selectedProvince = "";
+  searchText = "";
+  selectedDepartment = "";
+  selectedPosition = "";
   isAdmin = true;
   adverts: Advert[];
   activeAdverts: Advert[];
-  jsonDataPath: string = "../../../assets/json/province.json";
+  jsonDataPath = "../../../assets/json/province.json";
 
   theAdverts: AdvertCardModel[];
   constructor(
@@ -33,18 +36,20 @@ export class AdvertsComponent implements OnInit {
     private advertService: AdvertService,
     private authService: AuthService,
     private locationService: LocationService,
-    private dataService: DataService
+    private dataService: DataService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit() {
     this.dataService
       .get<AdvertCardModel[]>("http://localhost:8080/api/v1/adverts")
       .subscribe((response) => {
-        console.log(response.body);
         this.theAdverts = JSON.parse(JSON.stringify(response.body));
-        console.log(this.theAdverts);
+        for (const advertCard of this.theAdverts) {
+          advertCard.imageURL = 'data:image/jpeg;base64,' + advertCard.image;
+          this.sanitizer.bypassSecurityTrustUrl(advertCard.imageURL);
+        }
       });
-    console.log("ASDASDASD");
 
     this.isAdmin = this.authService.loggedIn;
     this.advertService.advertsChanged.subscribe((newAdverts: Advert[]) => {
@@ -74,9 +79,22 @@ export class AdvertsComponent implements OnInit {
   }
   onClickToggleLog() {
     this.authService.toggleLoggedIn();
-    console.log(this.getProvinces());
   }
-  onClickFilter() {}
+  onClickFilter() {
+    const province = this.provinceFilter.nativeElement.value;
+    console.log(province)
+
+
+    const filterModel = new FilterModel(this.searchText, this.selectedDepartment, this.selectedPosition, this.selectedProvince);
+    console.log(filterModel);
+
+    this.dataService
+      .update<FilterModel>(filterModel, "http://localhost:8080/api/v1/adverts/filter")
+      .subscribe((response) => {
+        console.log(response)
+        this.theAdverts = JSON.parse(JSON.stringify(response.body));
+      });
+  }
   getProvinces() {
     return this.locationService.getProvinces();
   }

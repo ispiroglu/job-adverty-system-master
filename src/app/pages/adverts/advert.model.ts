@@ -1,4 +1,4 @@
-import { User } from "../user/user.model";
+import { User } from "../user/shared/model/user.model";
 
 export class Advert {
   constructor(
