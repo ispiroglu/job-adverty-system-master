@@ -24,7 +24,10 @@ export class DataService extends BaseHttpService {
   }
 
   delete<T>(url: string) {
-    return this.httpDelete(url);
+    const headers = new HttpHeaders();
+    headers.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    console.log("Deleting -Z " + url)
+    return this.httpDelete(url, headers);
   }
   get<T>(url: string) {
     const headers = new HttpHeaders();

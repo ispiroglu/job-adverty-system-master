@@ -2,13 +2,13 @@ import { formatDate } from "@angular/common";
 import {
   AfterViewInit,
   Component,
-  ElementRef,
+  ElementRef, Input,
   OnDestroy,
   OnInit,
   ViewChild,
   ViewChildren,
-} from "@angular/core";
-import { FormGroup, FormControl, Validators } from "@angular/forms";
+} from '@angular/core';
+import {FormGroup, FormControl, Validators, ValidatorFn, AbstractControl} from '@angular/forms';
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { AdvertService } from "app/pages/adverts/advert/advert.service";
 import { AdvertInfoModel } from "app/pages/dashboard/models/advert-info.model";
@@ -40,7 +40,7 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild("district", { static: false }) districtList: ElementRef;
   @ViewChildren("userQuill") userQuill: ElementRef;
   currentUserID: number;
-
+  forbiddenValue = "-1";
   photoUrl = "";
   advertForm: FormGroup;
   loginSubs: Subscription;
@@ -50,13 +50,7 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedProvinceID: number;
   jobDefinition: string;
   maxLength = 1000;
-
-  uploadedImage: File;
-  dbImage: any;
-  postResponse: any;
-  successResponse: string;
-  image: any;
-
+  photoUploadCredentials: {type: string, ID: number, requiredFileType: string, caption: string}
   quillEditorStyle = {
     height: "300px",
     backgroundColor: "#ffff",
@@ -76,7 +70,6 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {}
 
   ngOnInit(): void {
-
     this.isAdmin = this.authService.loggedIn;
     this.loginSubs = this.authService.adminHasChanged.subscribe(
       (isAdmin: boolean) => {
@@ -104,13 +97,14 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
           this.patchForm();
         });
     }
+    this.photoUploadCredentials = {type: "advert", ID: this.advertID, requiredFileType: "image/png, ,image/jpeg", caption: "photo"};
   }
 
   isFormValid() {
-    // return this.advertForm.valid;
-    return true;
+    return this.advertForm.valid;
   }
   onSubmit() {
+    console.log(this.advertForm.get('district').value)
     const confirmText = !this.isAdmin
       ? "Do you really want to apply to this job? "
       : this.createMode
@@ -129,6 +123,7 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
             console.log(response)})
       } else {
         this.formToAdvert();
+        console.log(this.advert);
         if (this.createMode) {
           this.dataService.create<AdminAdvertInfo>(this.advert, `http://localhost:8080/api/v1/adverts`).subscribe(
             (response) => {
@@ -173,7 +168,11 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
     this.confirmationService.confirm(
       "Are you sure to delete this advert?",
       () => {
-        this.advertService.deleteAdvert(this.advertID);
+        console.log("DELETE")
+        this.dataService.delete(`http://localhost:8080/api/v1/adverts/${this.advertID}`).subscribe(
+          (response) => {
+            console.log(response); }
+        );
         this.router.navigate(["../"], { relativeTo: this.route });
       }
     );
@@ -214,8 +213,12 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
         Validators.required
       ),
       provinceID: new FormControl(jobProvinceID, Validators.required),
-      province: new FormControl(jobProvince, Validators.required),
-      district: new FormControl(jobDistrict, Validators.required),
+      province: new FormControl(jobProvince, [Validators.required, (control: AbstractControl) => {
+        return this.forbiddenValue.indexOf(control.value) === -1 ? null : {'forbiddenValue': true};
+      }]),
+      district: new FormControl(jobDistrict, [Validators.required, (control: AbstractControl) => {
+      return this.forbiddenValue.indexOf(control.value) === -1 ? null : {'forbiddenValue': true};
+    }]),
       jobDefinition: new FormControl(jobDesc, [
         Validators.required,
         Validators.minLength(20),
@@ -225,7 +228,6 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.isAdmin) {
       this.advertForm.disable();
       this.currentUserID = 2;
-      // this.currentUserID = this.userService.getCurrentUserID();
     }
   }
 
@@ -246,15 +248,6 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  onImageUpload(event: any) {
-    this.uploadedImage = event.target.files[0];
-  }
-
-  onSelectFile(event: any) {
-    const imgFormData = new FormData();
-    imgFormData.append("image", this.uploadedImage, this.uploadedImage.name);
-  }
-
   ngOnDestroy() {
     this.loginSubs.unsubscribe();
   }
@@ -268,10 +261,22 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.locationService.getProvinces();
   }
   getDistricts() {
-    if (this.advertForm.get("provinceID").value) {
+    if (this.advertForm.get("provinceID").value > -1) {
       return this.locationService.getProvinces()[
         this.advertForm.get("provinceID").value
       ].ilceleri;
     }
+  }
+  photoChanged(event: string) {
+    if (event === "photo") {
+      this.dataService.get<Blob>(`http://localhost:8080/api/v1/adverts/${this.advertID}/photo`)
+        .subscribe((response) => {
+          this.photoUrl = 'data:image/jpeg;base64,' + JSON.parse(JSON.stringify(response.body));
+          this.sanitizer.bypassSecurityTrustUrl(this.photoUrl);
+        })
+    }
+  }
+  onProvinceChange() {
+    this.advertForm.patchValue({district: '-1'});
   }
 }

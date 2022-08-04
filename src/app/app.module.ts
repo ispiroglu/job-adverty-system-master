@@ -23,8 +23,6 @@ import { DatePipe } from "@angular/common";
   declarations: [
     AppComponent,
     AdminLayoutComponent,
-    AdvertComponent,
-    TableComponent,
   ],
   imports: [
     BrowserAnimationsModule,

@@ -81,18 +81,19 @@ export class AdvertsComponent implements OnInit {
     this.authService.toggleLoggedIn();
   }
   onClickFilter() {
-    const province = this.provinceFilter.nativeElement.value;
-    console.log(province)
-
-
-    const filterModel = new FilterModel(this.searchText, this.selectedDepartment, this.selectedPosition, this.selectedProvince);
-    console.log(filterModel);
+    const provinceID = this.provinceFilter.nativeElement.value;
+    let province: string;
+    provinceID === "-1" ? province = "" : province = this.getProvinces()[provinceID].il;
+    const filterModel = new FilterModel(this.searchText, this.selectedDepartment, this.selectedPosition, province);
 
     this.dataService
-      .update<FilterModel>(filterModel, "http://localhost:8080/api/v1/adverts/filter")
+      .update<AdvertCardModel[]>(filterModel, "http://localhost:8080/api/v1/adverts/filter")
       .subscribe((response) => {
-        console.log(response)
         this.theAdverts = JSON.parse(JSON.stringify(response.body));
+        for (const advertCard of this.theAdverts) {
+          advertCard.imageURL = 'data:image/jpeg;base64,' + advertCard.image;
+          this.sanitizer.bypassSecurityTrustUrl(advertCard.imageURL);
+        }
       });
   }
   getProvinces() {

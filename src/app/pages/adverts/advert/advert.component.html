@@ -8,7 +8,7 @@
     <!-- Need to store photoUrl -->
   </span>
   <span class="row col-sm-12">
-    <input type="text" placeholder="Upload Cover Photo" />
+    <app-file-upload [uploadCredentials]= photoUploadCredentials (changed)="photoChanged($event)"></app-file-upload>
   </span>
   <span class="row">
     <span class="col-sm-6 col-xs-12 form-group">
@@ -114,7 +114,9 @@
         id="province"
         class="col-sm-12 form-control"
         formControlName="provinceID"
+        (change)="onProvinceChange()"
       >
+        <option value="-1">Please select province.</option>
         <option
           *ngFor="let province of getProvinces()"
           value="{{ province.plaka }}"
@@ -130,6 +132,7 @@
         formControlName="district"
         #district
       >
+        <option value="-1">Please select province.</option>
         <option
           selected
           *ngFor="let district of getDistricts()"

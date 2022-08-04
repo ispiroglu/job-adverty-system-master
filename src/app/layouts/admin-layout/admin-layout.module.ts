@@ -7,7 +7,6 @@ import { AdminLayoutRoutes } from "./admin-layout.routing";
 
 import { DashboardComponent } from "../../pages/dashboard/dashboard.component";
 import { UserComponent } from "../../pages/user/user.component";
-import { TableComponent } from "../../pages/table/table.component";
 import { TypographyComponent } from "../../pages/typography/typography.component";
 import { IconsComponent } from "../../pages/icons/icons.component";
 import { AdvertsComponent } from "../../pages/adverts/adverts.component";
@@ -26,6 +25,10 @@ import { AuthComponent } from "app/auth/auth.component";
 import { HttpClientModule } from "@angular/common/http";
 import { LoadingSpinnerComponent } from "app/shared/loading-spinner/loading-spinner.component";
 import { ApplicationsComponent } from "app/pages/applications/applications.component";
+import {FileUploadComponent} from '../../shared/file-upload/file-upload/file-upload.component';
+import {AdvertComponent} from '../../pages/adverts/advert/advert.component';
+import {TableComponent} from '../../pages/adverts/advert/table/table.component';
+import {QuillEditorComponent} from 'ngx-quill';
 
 @NgModule({
   imports: [
@@ -38,6 +41,7 @@ import { ApplicationsComponent } from "app/pages/applications/applications.compo
     NgxExtendedPdfViewerModule,
     MatDialogModule,
     NgbTooltipModule,
+    QuillEditorComponent,
   ],
   declarations: [
     DashboardComponent,
@@ -55,6 +59,9 @@ import { ApplicationsComponent } from "app/pages/applications/applications.compo
     AuthComponent,
     LoadingSpinnerComponent,
     ApplicationsComponent,
+    FileUploadComponent,
+    AdvertComponent,
+    TableComponent
   ],
 })
 export class AdminLayoutModule {}

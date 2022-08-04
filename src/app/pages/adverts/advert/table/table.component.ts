@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
+import {Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation} from '@angular/core';
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import * as XLSX from "xlsx";
 import { UserModal } from "../advert-modal/advert-modal.component";
@@ -30,11 +30,9 @@ export class TableComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private advertService: AdvertService,
     private dataService: DataService
   ) {}
   ngOnInit() {
-    // this.applicants = this.advertService.getAdvert(this.advertID).applicants; // Mock
     this.dataService.get<TableUserInfoModel[]>(`http://localhost:8080/api/v1/adverts/${this.advertID}/applications`)
       .subscribe( (response) => {
         console.log(response)
@@ -49,6 +47,15 @@ export class TableComponent implements OnInit {
     });
     modalRef.componentInstance.inModal = {id: applicant.id};
     modalRef.componentInstance.advertID = this.advertID;
+    modalRef.componentInstance.tableChanged.subscribe(
+      () => {
+        console.log("Data Changed")
+        this.dataService.get<TableUserInfoModel[]>(`http://localhost:8080/api/v1/adverts/${this.advertID}/applications`)
+          .subscribe( (response) => {
+            this.applicants = response.body
+          })
+      }
+    )
   }
   onClickExcelOutput() {
     const element = document.getElementById("table");

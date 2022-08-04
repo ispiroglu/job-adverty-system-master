@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {User} from 'app/pages/user/shared/model/user.model';
 import {UserService} from 'app/pages/user/user.service';
@@ -19,6 +19,7 @@ export class UserModal implements OnInit {
   @Input() inModal;
   applicant: User;
   @Input() advertID: number;
+  @Output() tableChanged = new EventEmitter<any>();
 
   constructor(
     private activeModal: NgbActiveModal,
@@ -36,6 +37,7 @@ export class UserModal implements OnInit {
       .subscribe((response) => {
         console.log(response)
       })
+    this.tableChanged.next({});
     this.onClickCancel();
   }
   onClickReject() {
@@ -46,6 +48,7 @@ export class UserModal implements OnInit {
       .subscribe((response) => {
         console.log(response)
       })
+    this.tableChanged.next({});
     this.onClickCancel();
   }
   onClickCancel() {

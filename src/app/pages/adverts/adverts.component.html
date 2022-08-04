@@ -52,6 +52,7 @@
         <i class="fa fa-location-arrow mr-1" aria-hidden="true"></i>
         <label for="province"> Province</label>
         <select name="province" id="province" class="form-control" #province>
+          <option value="-1">Please select province.</option>
           <option
             *ngFor="let province of getProvinces()"
             value="{{ province.plaka }}"

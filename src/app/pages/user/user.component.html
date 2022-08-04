@@ -19,14 +19,8 @@
         ></pdf-viewer>
       </div>
       <div class="row">
-        <div class="update ml-auto mr-auto">
-          <button
-            *ngIf="!inModal"
-            type="button"
-            class="btn btn-primary btn-round"
-          >
-            <i class="fa fa-cloud-upload">Update CV</i>
-          </button>
+        <div class="update ml-auto mr-auto" *ngIf="!inModal">
+          <app-file-upload [uploadCredentials]= cvUploadCredentials (changed)="changed($event)"></app-file-upload>
         </div>
       </div>
     </div>
@@ -51,10 +45,8 @@
               </a>
             </div>
             <div class="row">
-              <div class="update ml-auto mr-auto">
-                <button type="button" class="btn btn-primary btn-round">
-                  <i class="fa fa-cloud-upload">Update Photo</i>
-                </button>
+              <div class="update ml-auto mr-auto" *ngIf="!inModal">
+                <app-file-upload [uploadCredentials]= photoUploadCredentials (changed)="changed($event)"></app-file-upload>
               </div>
             </div>
             <div class="card-footer justify-content-center"></div>
@@ -129,8 +121,9 @@
                   class="col-sm-12 form-control"
                   formControlName="provinceID"
                   #province
-                  (change)="onProvinceChange($event)"
+                  (change)="onProvinceChange()"
                 >
+                  <option value="-1">Please select province.</option>
                   <option
                     *ngFor="let province of getProvinces()"
                     value="{{ province.plaka }}"
@@ -146,6 +139,7 @@
                   formControlName="district"
                   #district
                 >
+                  <option value="-1">Please select province.</option>
                   <option
                     *ngFor="let district of getDistricts()"
                     value="{{ district }}"

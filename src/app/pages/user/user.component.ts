@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from "@angular/core";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { ConfirmationPopupService } from "app/shared/confirmation-popup/confirmation-popup.service";
 import { LocationService } from "app/shared/locationJson/location-json.service";
@@ -34,8 +34,11 @@ export class UserComponent implements OnInit {
   pdfSrc: string;
   photoSrc: string;
   user: User;
+  forbiddenValue = "-1";
   @Input() inModal;
   userForm: FormGroup;
+  photoUploadCredentials: {type: string, ID: number, requiredFileType: string, caption: string};
+  cvUploadCredentials: {type: string, ID: number, requiredFileType: string, caption: string};
   constructor(
     private userService: UserService,
     private locationService: LocationService,
@@ -67,9 +70,18 @@ export class UserComponent implements OnInit {
         this.user = response.body;
         this.patchForm();
       });
+
+    this.photoUploadCredentials = {type: "user", ID: this.userID, requiredFileType: "image/png, ,image/jpeg", caption: "photo"};
+    this.cvUploadCredentials = {type: "user", ID: this.userID, requiredFileType: "application/pdf", caption: "cv"};
   }
 
   onClickSubmit() {
+    this.userForm.patchValue({
+      province:
+      this.locationService.getProvinces()[
+        this.userForm.get("provinceID").value
+        ].il,
+    });
     this.confirmationPopupService.confirm(
       "Do you want to update your profile?",
       this.updateUser.bind(this)
@@ -93,6 +105,21 @@ export class UserComponent implements OnInit {
     this.pdfComponent.pdfViewer.currentScaleValue = "page-fit";
   }
 
+  changed(event: string) {
+    if (event === "photo") {
+      this.dataService.get<Blob>(`http://localhost:8080/api/v1/users/${this.userID}/photo`)
+        .subscribe((response) => {
+          this.photoSrc = 'data:image/jpeg;base64,' + JSON.parse(JSON.stringify(response.body));
+          this.sanitizer.bypassSecurityTrustUrl(this.photoSrc);
+        })
+    } else {
+      this.dataService.get<Blob>(`http://localhost:8080/api/v1/users/${this.userID}/cv`)
+        .subscribe((response) => {
+          this.pdfSrc = 'data:image/jpeg;base64,' + JSON.parse(JSON.stringify(response.body));
+          this.sanitizer.bypassSecurityTrustUrl(this.pdfSrc);
+        })
+    }
+  }
   initForm() {
     const firstname = "";
     const  lastname = "";
@@ -100,7 +127,7 @@ export class UserComponent implements OnInit {
     const email = "";
     const phoneNumber = "";
     const district = "";
-    const provinceID = 0;
+    const provinceID = "-1";
     const experience = 0;
     const aboutUser = ""
 
@@ -112,11 +139,17 @@ export class UserComponent implements OnInit {
       gender: new FormControl(gender.toLocaleLowerCase(), Validators.required),
       email: new FormControl(email, [Validators.required, Validators.email]),
       phoneNumber: new FormControl(phoneNumber, Validators.required),
-      provinceID: new FormControl(provinceID, Validators.required),
-      district: new FormControl(district, Validators.required),
+      provinceID: new FormControl(provinceID, [Validators.required, (control: AbstractControl) => {
+        return this.forbiddenValue.indexOf(control.value) === -1 ? null : {'forbiddenValue': true};
+      }]),
+      district: new FormControl(district, [Validators.required, (control: AbstractControl) => {
+        return this.forbiddenValue.indexOf(control.value) === -1 ? null : {'forbiddenValue': true};
+      }]),
       experience: new FormControl(experience, Validators.required),
       aboutUser: new FormControl(aboutUser, Validators.required),
     });
+    console.log(31)
+    console.log(this.isFormValid())
   }
   patchForm() {
     this.userForm.patchValue({
@@ -131,17 +164,17 @@ export class UserComponent implements OnInit {
       aboutUser: this.user.aboutUser,
     });
   }
-  onProvinceChange(data: any) {
-    console.log(data);
+  onProvinceChange() {
+    this.userForm.patchValue({district: "-1"})
   }
   getProvinces() {
     return this.locationService.getProvinces();
   }
   getDistricts() {
-    if (this.userForm.get("provinceID").value) {
+    if (this.userForm.get("provinceID").value > -1) {
       return this.locationService.getProvinces()[
         this.userForm.get("provinceID").value
-      ].ilceleri;
+        ].ilceleri;
     }
   }
 }
