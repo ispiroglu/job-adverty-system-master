@@ -50,42 +50,5 @@ export class DashboardComponent implements OnInit {
 
         this.dashboardModel = JSON.parse(JSON.stringify(response.body));
       });
-
-    // this.totalUserCount = this.userService.getUsers().length;
-    // for (const advert of this.advertService.getAdverts()) {
-    //   if (advert.isOpen) {
-    //     this.totalOpenAdvertCount++;
-    //   } else {
-    //     this.totalClosedAdvertCount++;
-    //   }
-    // }
-    // this.totalAdvertCount =
-    //   this.totalClosedAdvertCount + this.totalOpenAdvertCount;
-
-    // console.log(this.totalAdvertCount);
-
-    // this.soonEndingAdverts = this.advertService
-    //   .getAdverts()
-    //   .filter((advert: Advert) => {
-    //     if (
-    //       advert.isOpen &&
-    //       new Date(advert.endDate).valueOf() - date.valueOf() < 5
-    //     ) {
-    //       return advert;
-    //     }
-    //   });
-
-    // this.soonStartingAdverts = this.advertService
-    //   .getAdverts()
-    //   .filter((advert: Advert) => {
-    //     if (
-    //       advert.isOpen &&
-    //       date.valueOf() - new Date(advert.endDate).valueOf() < 5
-    //     ) {
-    //       return advert;
-    //     }
-    //   });
-
-    console.log(this.dashboardModel);
   }
 }

@@ -2,13 +2,21 @@ import { formatDate } from "@angular/common";
 import {
   AfterViewInit,
   Component,
-  ElementRef, Input,
+  ElementRef,
+  Input,
   OnDestroy,
   OnInit,
+  Output,
   ViewChild,
   ViewChildren,
-} from '@angular/core';
-import {FormGroup, FormControl, Validators, ValidatorFn, AbstractControl} from '@angular/forms';
+} from "@angular/core";
+import {
+  FormGroup,
+  FormControl,
+  Validators,
+  ValidatorFn,
+  AbstractControl,
+} from "@angular/forms";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { AdvertService } from "app/pages/adverts/advert/advert.service";
 import { AdvertInfoModel } from "app/pages/dashboard/models/advert-info.model";
@@ -17,10 +25,10 @@ import { AuthService } from "app/shared/auth.service";
 import { ConfirmationPopupService } from "app/shared/confirmation-popup/confirmation-popup.service";
 import { DataService } from "app/shared/http/data.service";
 import { LocationService } from "app/shared/locationJson/location-json.service";
-import { Subscription } from "rxjs";
+import { Subject, Subscription } from "rxjs";
 import { AdminAdvertInfo } from "../shared/models/admin-advert-info.model";
-import {AddApplicantRequestModel} from '../shared/models/add-applicant-request.model';
-import {DomSanitizer} from '@angular/platform-browser';
+import { AddApplicantRequestModel } from "../shared/models/add-applicant-request.model";
+import { DomSanitizer } from "@angular/platform-browser";
 
 interface Province {
   il: string;
@@ -50,7 +58,13 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedProvinceID: number;
   jobDefinition: string;
   maxLength = 1000;
-  photoUploadCredentials: {type: string, ID: number, requiredFileType: string, caption: string}
+  photoUploadCredentials: {
+    type: string;
+    ID: number;
+    requiredFileType: string;
+    caption: string;
+  };
+  @Output() sendRequestSubject = new Subject<number>();
   quillEditorStyle = {
     height: "300px",
     backgroundColor: "#ffff",
@@ -80,11 +94,13 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
       this.advertID = +params["id"];
       this.createMode = params["id"] === undefined;
     });
-    this.dataService.get<Blob>(`http://localhost:8080/api/v1/adverts/${this.advertID}/photo`)
+    this.dataService
+      .get<Blob>(`http://localhost:8080/api/v1/adverts/${this.advertID}/photo`)
       .subscribe((response) => {
-        this.photoUrl = 'data:image/jpeg;base64,' + JSON.parse(JSON.stringify(response.body));
+        this.photoUrl =
+          "data:image/jpeg;base64," + JSON.parse(JSON.stringify(response.body));
         this.sanitizer.bypassSecurityTrustUrl(this.photoUrl);
-      })
+      });
     this.initForm();
 
     if (!this.createMode) {
@@ -97,14 +113,20 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
           this.patchForm();
         });
     }
-    this.photoUploadCredentials = {type: "advert", ID: this.advertID, requiredFileType: "image/png, ,image/jpeg", caption: "photo"};
+    this.photoUploadCredentials = {
+      type: "advert",
+      ID: this.advertID,
+      requiredFileType: "image/png, ,image/jpeg",
+      caption: "photo",
+    };
   }
 
   isFormValid() {
-    return this.advertForm.valid;
+    return this.advertForm.valid && this.photoUrl;
   }
   onSubmit() {
-    console.log(this.advertForm.get('district').value)
+    console.log(this.findInvalidControls());
+
     const confirmText = !this.isAdmin
       ? "Do you really want to apply to this job? "
       : this.createMode
@@ -113,28 +135,37 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
     this.confirmationService.confirm(confirmText, () => {
       this.advertForm.patchValue({
         province:
-        this.locationService.getProvinces()[
-          this.advertForm.get("provinceID").value
+          this.locationService.getProvinces()[
+            this.advertForm.get("provinceID").value
           ].il,
       });
-      if (!this.isAdmin) { // APPLY
-        this.dataService.create<number>(this.currentUserID, `http://localhost:8080/api/v1/adverts/${this.advertID}/applications`)
-          .subscribe((response) => {
-            console.log(response)})
+      if (!this.isAdmin) {
+        // APPLY
+        this.dataService
+          .create<number>(
+            this.currentUserID,
+            `http://localhost:8080/api/v1/adverts/${this.advertID}/applications`
+          )
+          .subscribe((response) => {});
       } else {
         this.formToAdvert();
         console.log(this.advert);
         if (this.createMode) {
-          this.dataService.create<AdminAdvertInfo>(this.advert, `http://localhost:8080/api/v1/adverts`).subscribe(
-            (response) => {
-              console.log(response)}
-          )
+          this.dataService
+            .create<AdminAdvertInfo>(
+              this.advert,
+              `http://localhost:8080/api/v1/adverts`
+            )
+            .subscribe((response) => {
+              this.sendRequestSubject.next(response.body.id);
+            });
         } else {
-          this.dataService.update<AdminAdvertInfo>(this.advert, `http://localhost:8080/api/v1/adverts/${this.advertID}/adminView`)
-            .subscribe(
-              (response) => {
-                console.log(response)}
-            );
+          this.dataService
+            .update<AdminAdvertInfo>(
+              this.advert,
+              `http://localhost:8080/api/v1/adverts/${this.advertID}/adminView`
+            )
+            .subscribe((response) => {});
         }
       }
       this.router.navigate(["/adverts"]);
@@ -143,20 +174,20 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private formToAdvert() {
     if (!this.advert) {
-      this.advert = <AdminAdvertInfo>{}
+      this.advert = <AdminAdvertInfo>{};
     }
-    this.advert.name = this.advertForm.get('name').value;
-    this.advert.summary = this.advertForm.get('summary').value;
-    this.advert.startDate = this.advertForm.get('startDate').value;
-    this.advert.endDate = this.advertForm.get('endDate').value;
-    this.advert.provinceID = this.advertForm.get('provinceID').value;
-    this.advert.province = this.advertForm.get('province').value;
-    this.advert.district = this.advertForm.get('district').value;
-    this.advert.position = this.advertForm.get('position').value;
-    this.advert.jobDefinition = this.advertForm.get('jobDefinition').value;
-    this.advert.capacity = this.advertForm.get('capacity').value;
-    this.advert.companyName = this.advertForm.get('companyName').value;
-    this.advert.department = this.advertForm.get('department').value;
+    this.advert.name = this.advertForm.get("name").value;
+    this.advert.summary = this.advertForm.get("summary").value;
+    this.advert.startDate = this.advertForm.get("startDate").value;
+    this.advert.endDate = this.advertForm.get("endDate").value;
+    this.advert.provinceID = this.advertForm.get("provinceID").value;
+    this.advert.province = this.advertForm.get("province").value;
+    this.advert.district = this.advertForm.get("district").value;
+    this.advert.position = this.advertForm.get("position").value;
+    this.advert.jobDefinition = this.advertForm.get("jobDefinition").value;
+    this.advert.capacity = this.advertForm.get("capacity").value;
+    this.advert.companyName = this.advertForm.get("companyName").value;
+    this.advert.department = this.advertForm.get("department").value;
   }
 
   onClickCancel() {
@@ -168,11 +199,12 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
     this.confirmationService.confirm(
       "Are you sure to delete this advert?",
       () => {
-        console.log("DELETE")
-        this.dataService.delete(`http://localhost:8080/api/v1/adverts/${this.advertID}`).subscribe(
-          (response) => {
-            console.log(response); }
-        );
+        console.log("DELETE");
+        this.dataService
+          .delete(`http://localhost:8080/api/v1/adverts/${this.advertID}`)
+          .subscribe((response) => {
+            console.log(response);
+          });
         this.router.navigate(["../"], { relativeTo: this.route });
       }
     );
@@ -212,13 +244,23 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
         formatDate(jobEndDate, "yyyy-MM-dd", "en"),
         Validators.required
       ),
-      provinceID: new FormControl(jobProvinceID, Validators.required),
-      province: new FormControl(jobProvince, [Validators.required, (control: AbstractControl) => {
-        return this.forbiddenValue.indexOf(control.value) === -1 ? null : {'forbiddenValue': true};
-      }]),
-      district: new FormControl(jobDistrict, [Validators.required, (control: AbstractControl) => {
-      return this.forbiddenValue.indexOf(control.value) === -1 ? null : {'forbiddenValue': true};
-    }]),
+      provinceID: new FormControl(jobProvinceID, [
+        Validators.required,
+        (control: AbstractControl) => {
+          return this.forbiddenValue.indexOf(control.value) === -1
+            ? null
+            : { forbiddenValue: true };
+        },
+      ]),
+      province: new FormControl(jobProvince),
+      district: new FormControl(jobDistrict, [
+        Validators.required,
+        (control: AbstractControl) => {
+          return this.forbiddenValue.indexOf(control.value) === -1
+            ? null
+            : { forbiddenValue: true };
+        },
+      ]),
       jobDefinition: new FormControl(jobDesc, [
         Validators.required,
         Validators.minLength(20),
@@ -247,7 +289,6 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
       jobDefinition: this.advert.jobDefinition,
     });
   }
-
   ngOnDestroy() {
     this.loginSubs.unsubscribe();
   }
@@ -268,15 +309,35 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
   photoChanged(event: string) {
-    if (event === "photo") {
-      this.dataService.get<Blob>(`http://localhost:8080/api/v1/adverts/${this.advertID}/photo`)
-        .subscribe((response) => {
-          this.photoUrl = 'data:image/jpeg;base64,' + JSON.parse(JSON.stringify(response.body));
-          this.sanitizer.bypassSecurityTrustUrl(this.photoUrl);
-        })
-    }
+    // if (event === "photo") {
+    //   this.dataService
+    //     .get<Blob>(
+    //       `http://localhost:8080/api/v1/adverts/${this.advertID}/photo`
+    //     )
+    //     .subscribe((response) => {
+    //       this.photoUrl =
+    //         "data:image/jpeg;base64," +
+    //         JSON.parse(JSON.stringify(response.body));
+    //       this.sanitizer.bypassSecurityTrustUrl(this.photoUrl);
+    //     });
+    // }
   }
+  cachedFile(event: { url: string; type: string }) {
+    this.sanitizer.bypassSecurityTrustUrl(event.url);
+    this.photoUrl = event.url;
+  }
+
   onProvinceChange() {
-    this.advertForm.patchValue({district: '-1'});
+    this.advertForm.patchValue({ district: "-1" });
+  }
+  findInvalidControls() {
+    const invalid = [];
+    const controls = this.advertForm.controls;
+    for (const name in controls) {
+      if (controls[name].invalid) {
+        invalid.push(name);
+      }
+    }
+    return invalid;
   }
 }

@@ -14,16 +14,16 @@ export class BaseHttpService {
     /*
         file operation?
     */
-    console.log("Sending post")
-    console.log(data)
-    return this.httpClient.post(requestUrl, data, {
+    console.log("Sending post");
+    console.log(data);
+    return this.httpClient.post<T>(requestUrl, data, {
       headers,
       observe: "response",
     });
   }
 
   httpPatch<T>(requestUrl: string = "", data: any, headers?: HttpHeaders) {
-    console.log("sending patch " + requestUrl)
+    console.log("sending patch " + requestUrl);
     return this.httpClient.patch<T>(requestUrl, data, {
       headers,
       observe: "response",

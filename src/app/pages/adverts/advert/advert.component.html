@@ -8,7 +8,12 @@
     <!-- Need to store photoUrl -->
   </span>
   <span class="row col-sm-12">
-    <app-file-upload [uploadCredentials]= photoUploadCredentials (changed)="photoChanged($event)"></app-file-upload>
+    <app-file-upload
+      [uploadCredentials]="photoUploadCredentials"
+      [sendRequestSubject]="sendRequestSubject"
+      (changed)="photoChanged($event)"
+      (cachedFile)="cachedFile($event)"
+    ></app-file-upload>
   </span>
   <span class="row">
     <span class="col-sm-6 col-xs-12 form-group">

@@ -7,7 +7,7 @@
       <div class="card-body" style="position: relative; height: 100%">
         <pdf-viewer
           class="col-md-11"
-          [(src)]= "pdfSrc"
+          [(src)]="pdfSrc"
           [show-all]="false"
           [autoresize]="true"
           [original-size]="true"
@@ -20,7 +20,12 @@
       </div>
       <div class="row">
         <div class="update ml-auto mr-auto" *ngIf="!inModal">
-          <app-file-upload [uploadCredentials]= cvUploadCredentials (changed)="changed($event)"></app-file-upload>
+          <app-file-upload
+            [uploadCredentials]="cvUploadCredentials"
+            [sendRequestSubject]="sendRequestSubject"
+            (changed)="changed($event)"
+            (cachedFile)="cachedFile($event)"
+          ></app-file-upload>
         </div>
       </div>
     </div>
@@ -36,17 +41,18 @@
           <div class="card-body">
             <div class="author">
               <a href="#">
-                <img
-                  class="avatar border-gray"
-                  [(src)]= "photoSrc"
-                  alt="..."
-                />
+                <img class="avatar border-gray" [(src)]="photoSrc" alt="..." />
                 <h5 class="title">{{ user.firstname }} {{ user.lastname }}</h5>
               </a>
             </div>
             <div class="row">
               <div class="update ml-auto mr-auto" *ngIf="!inModal">
-                <app-file-upload [uploadCredentials]= photoUploadCredentials (changed)="changed($event)"></app-file-upload>
+                <app-file-upload
+                  [uploadCredentials]="photoUploadCredentials"
+                  [sendRequestSubject]="sendRequestSubject"
+                  (changed)="changed($event)"
+                  (cachedFile)="cachedFile($event)"
+                ></app-file-upload>
               </div>
             </div>
             <div class="card-footer justify-content-center"></div>
