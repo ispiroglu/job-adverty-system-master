@@ -11,13 +11,12 @@
     <app-file-upload
       [uploadCredentials]="photoUploadCredentials"
       [sendRequestSubject]="sendRequestSubject"
-      (changed)="photoChanged($event)"
       (cachedFile)="cachedFile($event)"
     ></app-file-upload>
   </span>
   <span class="row">
     <span class="col-sm-6 col-xs-12 form-group">
-      <label for="name">Advert Name</label>
+      <label for="advertName">Advert Name</label>
       <input
         type="text"
         id="advertName"
@@ -28,7 +27,7 @@
       />
     </span>
     <span class="col-sm-6 col-xs-12 form-group">
-      <label for="amount">Advert Summary</label>
+      <label for="advertSummary">Advert Summary</label>
       <input
         type="text"
         id="advertSummary"
@@ -52,7 +51,7 @@
       />
     </span>
     <span class="col-sm-6 col-xs-12 form-group">
-      <label for="capactiy">Capacity</label>
+      <label for="capacity">Capacity</label>
       <input
         type="number"
         id="capacity"
@@ -133,6 +132,7 @@
     <span class="col-sm-6 col-xs-12">
       <label for="district">District</label>
       <select
+        id="district"
         class="col-sm-12 form-control"
         formControlName="district"
         #district
@@ -153,6 +153,7 @@
       <label for="jobDesc">Job Description</label>
       <span *ngIf="isAdmin">
         <quill-editor
+          id="jobDesc"
           [styles]="quillEditorStyle"
           formControlName="jobDefinition"
           (onContentChanged)="onContentChanged($event)"

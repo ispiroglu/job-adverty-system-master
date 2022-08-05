@@ -2,39 +2,24 @@ import { formatDate } from "@angular/common";
 import {
   AfterViewInit,
   Component,
-  ElementRef,
-  Input,
   OnDestroy,
   OnInit,
   Output,
-  ViewChild,
-  ViewChildren,
 } from "@angular/core";
 import {
   FormGroup,
   FormControl,
   Validators,
-  ValidatorFn,
   AbstractControl,
 } from "@angular/forms";
 import { ActivatedRoute, Params, Router } from "@angular/router";
-import { AdvertService } from "app/pages/adverts/advert/advert.service";
-import { AdvertInfoModel } from "app/pages/dashboard/models/advert-info.model";
-import { UserService } from "app/pages/user/user.service";
 import { AuthService } from "app/shared/auth.service";
 import { ConfirmationPopupService } from "app/shared/confirmation-popup/confirmation-popup.service";
 import { DataService } from "app/shared/http/data.service";
 import { LocationService } from "app/shared/locationJson/location-json.service";
 import { Subject, Subscription } from "rxjs";
-import { AdminAdvertInfo } from "../shared/models/admin-advert-info.model";
-import { AddApplicantRequestModel } from "../shared/models/add-applicant-request.model";
+import { AdvertInfo } from "../shared/models/advert-info.model";
 import { DomSanitizer } from "@angular/platform-browser";
-
-interface Province {
-  il: string;
-  plaka: number;
-  ilceler: string[];
-}
 
 @Component({
   selector: "app-advert",
@@ -42,11 +27,7 @@ interface Province {
   styleUrls: ["./advert.component.scss"],
 })
 export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
-  advert: AdminAdvertInfo;
-
-  @ViewChild("province", { static: false }) provinceList: ElementRef;
-  @ViewChild("district", { static: false }) districtList: ElementRef;
-  @ViewChildren("userQuill") userQuill: ElementRef;
+  advert: AdvertInfo;
   currentUserID: number;
   forbiddenValue = "-1";
   photoUrl = "";
@@ -73,10 +54,8 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private advertService: AdvertService,
     private authService: AuthService,
     private locationService: LocationService,
-    private userService: UserService,
     private confirmationService: ConfirmationPopupService,
     private dataService: DataService,
     private sanitizer: DomSanitizer
@@ -105,7 +84,7 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (!this.createMode) {
       this.dataService
-        .get<AdminAdvertInfo>(
+        .get<AdvertInfo>(
           `http://localhost:8080/api/v1/adverts/${this.advertID}/adminView`
         )
         .subscribe((response) => {
@@ -152,7 +131,7 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
         console.log(this.advert);
         if (this.createMode) {
           this.dataService
-            .create<AdminAdvertInfo>(
+            .create<AdvertInfo>(
               this.advert,
               `http://localhost:8080/api/v1/adverts`
             )
@@ -161,20 +140,22 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
             });
         } else {
           this.dataService
-            .update<AdminAdvertInfo>(
+            .update<AdvertInfo>(
               this.advert,
               `http://localhost:8080/api/v1/adverts/${this.advertID}/adminView`
             )
             .subscribe((response) => {});
         }
       }
-      this.router.navigate(["/adverts"]);
+      setTimeout(() => {
+        this.router.navigate(["../"], { relativeTo: this.route });
+      }, 500)
     });
   }
 
   private formToAdvert() {
     if (!this.advert) {
-      this.advert = <AdminAdvertInfo>{};
+      this.advert = <AdvertInfo>{};
     }
     this.advert.name = this.advertForm.get("name").value;
     this.advert.summary = this.advertForm.get("summary").value;
@@ -205,7 +186,9 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
           .subscribe((response) => {
             console.log(response);
           });
-        this.router.navigate(["../"], { relativeTo: this.route });
+        setTimeout(() => {
+          this.router.navigate(["../"], { relativeTo: this.route });
+        }, 500)
       }
     );
   }
@@ -307,20 +290,6 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
         this.advertForm.get("provinceID").value
       ].ilceleri;
     }
-  }
-  photoChanged(event: string) {
-    // if (event === "photo") {
-    //   this.dataService
-    //     .get<Blob>(
-    //       `http://localhost:8080/api/v1/adverts/${this.advertID}/photo`
-    //     )
-    //     .subscribe((response) => {
-    //       this.photoUrl =
-    //         "data:image/jpeg;base64," +
-    //         JSON.parse(JSON.stringify(response.body));
-    //       this.sanitizer.bypassSecurityTrustUrl(this.photoUrl);
-    //     });
-    // }
   }
   cachedFile(event: { url: string; type: string }) {
     this.sanitizer.bypassSecurityTrustUrl(event.url);

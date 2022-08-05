@@ -2,10 +2,7 @@ import { Routes } from "@angular/router";
 
 import { DashboardComponent } from "../../pages/dashboard/dashboard.component";
 import { UserComponent } from "../../pages/user/user.component";
-import { TypographyComponent } from "../../pages/typography/typography.component";
-import { IconsComponent } from "../../pages/icons/icons.component";
 import { AdvertsComponent } from "../../pages/adverts/adverts.component";
-import { UpgradeComponent } from "../../pages/upgrade/upgrade.component";
 import { AdvertComponent } from "app/pages/adverts/advert/advert.component";
 import { AuthComponent } from "app/auth/auth.component";
 import { ApplicationsComponent } from "app/pages/applications/applications.component";
@@ -13,8 +10,6 @@ import { ApplicationsComponent } from "app/pages/applications/applications.compo
 export const AdminLayoutRoutes: Routes = [
   { path: "dashboard", component: DashboardComponent },
   { path: "user", component: UserComponent },
-  { path: "typography", component: TypographyComponent },
-  { path: "icons", component: IconsComponent },
   {
     path: "adverts",
     children: [
@@ -27,7 +22,6 @@ export const AdminLayoutRoutes: Routes = [
       },
     ],
   },
-  { path: "upgrade", component: UpgradeComponent },
   { path: "auth", component: AuthComponent },
   { path: "myApplications", component: ApplicationsComponent },
 ];

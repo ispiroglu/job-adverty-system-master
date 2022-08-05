@@ -1,14 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { AdvertService } from "app/pages/adverts/advert/advert.service";
-import { AdvertProvinceFilter } from "app/shared/advert-province-filter.pipe";
-import { AdvertSearchFilter } from "app/shared/advert-search-filter.pipe";
 import { AuthService } from "app/shared/auth.service";
-import { Advert } from "./advert.model";
 import { LocationService } from "app/shared/locationJson/location-json.service";
 import { AdvertCardModel } from "./shared/models/advert-card.model";
 import { DataService } from "app/shared/http/data.service";
-import {AdminAdvertInfo} from './shared/models/admin-advert-info.model';
 import {FilterModel} from './shared/models/filter.model';
 import {DomSanitizer} from '@angular/platform-browser';
 
@@ -25,15 +20,10 @@ export class AdvertsComponent implements OnInit {
   selectedDepartment = "";
   selectedPosition = "";
   isAdmin = true;
-  adverts: Advert[];
-  activeAdverts: Advert[];
-  jsonDataPath = "../../../assets/json/province.json";
-
   theAdverts: AdvertCardModel[];
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private advertService: AdvertService,
     private authService: AuthService,
     private locationService: LocationService,
     private dataService: DataService,
@@ -51,20 +41,9 @@ export class AdvertsComponent implements OnInit {
         }
       });
 
-    this.isAdmin = this.authService.loggedIn;
-    this.advertService.advertsChanged.subscribe((newAdverts: Advert[]) => {
-      this.adverts = newAdverts;
-    });
-    this.adverts = this.advertService.getAdverts();
-    this.authService.adminHasChanged.subscribe((isAdmin: boolean) => {
-      this.isAdmin = isAdmin;
-    });
-    this.activeAdverts = this.adverts.slice();
-  }
-  getActiveAdverts() {
-    return this.activeAdverts.filter((advert: Advert) => {
-      return advert.isOpen;
-    });
+    this.authService.adminHasChanged.subscribe(
+      (isLoggedIn: boolean) => { this.isAdmin = isLoggedIn }
+    )
   }
 
   onClickApply(id: number) {
@@ -78,6 +57,7 @@ export class AdvertsComponent implements OnInit {
     this.router.navigate(["new"], { relativeTo: this.route });
   }
   onClickToggleLog() {
+    console.log("1")
     this.authService.toggleLoggedIn();
   }
   onClickFilter() {

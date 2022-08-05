@@ -10,6 +10,7 @@ export class AuthService {
   constructor() {}
 
   toggleLoggedIn() {
+    console.log("d")
     this.loggedIn = !this.loggedIn;
     this.adminHasChanged.next(this.loggedIn);
   }

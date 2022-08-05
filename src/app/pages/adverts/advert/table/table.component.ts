@@ -1,11 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation} from '@angular/core';
+import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import * as XLSX from "xlsx";
 import { UserModal } from "../advert-modal/advert-modal.component";
-import { AdvertService } from "../advert.service";
 import {DataService} from '../../../../shared/http/data.service';
 import {TableUserInfoModel} from './model/table-user-info.model';
-import {User} from '../../../user/shared/model/user.model';
 
 @Component({
   selector: "table-cmp",
@@ -35,7 +33,6 @@ export class TableComponent implements OnInit {
   ngOnInit() {
     this.dataService.get<TableUserInfoModel[]>(`http://localhost:8080/api/v1/adverts/${this.advertID}/applications`)
       .subscribe( (response) => {
-        console.log(response)
         this.applicants = response.body
       })
   }

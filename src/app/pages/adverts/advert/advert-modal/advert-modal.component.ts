@@ -1,8 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {User} from 'app/pages/user/shared/model/user.model';
-import {UserService} from 'app/pages/user/user.service';
-import {AdvertService} from '../advert.service';
 import {DataService} from '../../../../shared/http/data.service';
 import {UpdateApplicationStatusModel} from './model/update-application-status.model';
 import {AdvertStatus} from '../../../../shared/application/application.model';
@@ -23,8 +21,6 @@ export class UserModal implements OnInit {
 
   constructor(
     private activeModal: NgbActiveModal,
-    private userService: UserService,
-    private advertService: AdvertService,
     private dataService: DataService,
   ) {}
   ngOnInit(): void {}

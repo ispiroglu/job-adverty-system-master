@@ -1,10 +1,6 @@
 import { DatePipe } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
 import { DataService } from "app/shared/http/data.service";
-import Chart from "chart.js";
-import { Advert } from "../adverts/advert.model";
-import { AdvertService } from "../adverts/advert/advert.service";
-import { UserService } from "../user/user.service";
 import { AdvertInfoModel } from "./models/advert-info.model";
 import { DashboardModel } from "./models/dashboard.model";
 
@@ -21,7 +17,6 @@ export class DashboardComponent implements OnInit {
   public chartHours;
 
   todaysDate: string;
-  newUserCount: number;
   totalOpenAdvertCount = 0;
   totalClosedAdvertCount = 0;
   totalUserCount: number;
@@ -33,8 +28,6 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     public datepipe: DatePipe,
-    private userService: UserService,
-    private advertService: AdvertService,
     private dataService: DataService
   ) {}
 
