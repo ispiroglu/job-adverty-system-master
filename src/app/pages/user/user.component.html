@@ -22,7 +22,6 @@
           <app-file-upload
             [uploadCredentials]="cvUploadCredentials"
             [sendRequestSubject]="sendRequestSubject"
-            (changed)="changed($event)"
             (cachedFile)="cachedFile($event)"
           ></app-file-upload>
         </div>
@@ -40,7 +39,12 @@
           <div class="card-body">
             <div class="author">
               <a href="#">
-                <img class="avatar border-gray" [(src)]="photoSrc" alt="..." />
+                <img
+                  class="avatar border-gray"
+                  [(src)]="photoSrc"
+                  onerror="this.src='../../../assets/img/default-avatar.png'"
+                  alt="..."
+                />
                 <h5 class="title">{{ user.firstname }} {{ user.lastname }}</h5>
               </a>
             </div>
@@ -49,7 +53,6 @@
                 <app-file-upload
                   [uploadCredentials]="photoUploadCredentials"
                   [sendRequestSubject]="sendRequestSubject"
-                  (changed)="changed($event)"
                   (cachedFile)="cachedFile($event)"
                 ></app-file-upload>
               </div>

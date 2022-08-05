@@ -1,19 +1,24 @@
-import {Component, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators,} from '@angular/forms';
-import {ConfirmationPopupService} from 'app/shared/confirmation-popup/confirmation-popup.service';
-import {LocationService} from 'app/shared/locationJson/location-json.service';
-import {PdfViewerComponent} from 'ng2-pdf-viewer';
-import {User} from './shared/model/user.model';
-import {DataService} from '../../shared/http/data.service';
-import {DomSanitizer} from '@angular/platform-browser';
-import {Subject} from 'rxjs';
+import { Component, Input, OnInit, Output, ViewChild } from "@angular/core";
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  Validators,
+} from "@angular/forms";
+import { ConfirmationPopupService } from "app/shared/confirmation-popup/confirmation-popup.service";
+import { LocationService } from "app/shared/locationJson/location-json.service";
+import { PdfViewerComponent } from "ng2-pdf-viewer";
+import { User } from "./shared/model/user.model";
+import { DataService } from "../../shared/http/data.service";
+import { DomSanitizer } from "@angular/platform-browser";
+import { Subject } from "rxjs";
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: 'user-cmp',
+  selector: "user-cmp",
   moduleId: module.id,
-  templateUrl: 'user.component.html',
-  styleUrls: ['user.component.scss'],
+  templateUrl: "user.component.html",
+  styleUrls: ["user.component.scss"],
   styles: [
     `
       .modal-backdrop.modal-index {
@@ -23,14 +28,14 @@ import {Subject} from 'rxjs';
   ],
 })
 export class UserComponent implements OnInit {
-  @ViewChild(PdfViewerComponent, {static: false})
+  @ViewChild(PdfViewerComponent, { static: false })
   private pdfComponent: PdfViewerComponent;
   editMode = true;
   userID: number;
   pdfSrc: string;
   photoSrc: string;
   user: User;
-  forbiddenValue = '-1';
+  forbiddenValue = "-1";
   @Input() inModal;
   userForm: FormGroup;
 
@@ -53,8 +58,7 @@ export class UserComponent implements OnInit {
     private confirmationPopupService: ConfirmationPopupService,
     private dataService: DataService,
     private sanitizer: DomSanitizer
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.initForm();
@@ -62,52 +66,53 @@ export class UserComponent implements OnInit {
       this.userID = this.inModal.id;
       this.userForm.disable();
     } else {
-      this.userID = 2;
+      this.userID = 7;
     }
     this.dataService
       .get<Blob>(`http://localhost:8080/api/v1/users/${this.userID}/photo`)
       .subscribe((response) => {
         this.photoSrc =
-          'data:image/jpeg;base64,' + JSON.parse(JSON.stringify(response.body));
+          "data:image/jpeg;base64," + JSON.parse(JSON.stringify(response.body));
         this.sanitizer.bypassSecurityTrustUrl(this.photoSrc);
       });
     this.dataService
       .get<Blob>(`http://localhost:8080/api/v1/users/${this.userID}/cv`)
       .subscribe((response) => {
         this.pdfSrc =
-          'data:image/jpeg;base64,' + JSON.parse(JSON.stringify(response.body));
+          "data:image/jpeg;base64," + JSON.parse(JSON.stringify(response.body));
         this.sanitizer.bypassSecurityTrustUrl(this.pdfSrc);
       });
     this.dataService
       .get<User>(`http://localhost:8080/api/v1/users/${this.userID}`)
       .subscribe((response) => {
         this.user = response.body;
+        console.log(this.user);
         this.patchForm();
       });
 
     this.photoUploadCredentials = {
-      type: 'user',
+      type: "user",
       ID: this.userID,
-      requiredFileType: 'image/png, ,image/jpeg',
-      caption: 'photo',
+      requiredFileType: "image/png, ,image/jpeg",
+      caption: "photo",
     };
     this.cvUploadCredentials = {
-      type: 'user',
+      type: "user",
       ID: this.userID,
-      requiredFileType: 'application/pdf',
-      caption: 'cv',
+      requiredFileType: "application/pdf",
+      caption: "cv",
     };
   }
 
   onClickSubmit() {
     this.userForm.patchValue({
       province:
-      this.locationService.getProvinces()[
-        this.userForm.get('provinceID').value
+        this.locationService.getProvinces()[
+          this.userForm.get("provinceID").value
         ].il,
     });
     this.confirmationPopupService.confirm(
-      'Do you want to update your profile?',
+      "Do you want to update your profile?",
       this.updateUser.bind(this)
     );
   }
@@ -132,43 +137,19 @@ export class UserComponent implements OnInit {
   }
 
   pageRendered() {
-    this.pdfComponent.pdfViewer.currentScaleValue = 'page-fit';
-  }
-
-  changed(event: string) {
-    // if (event === "photo") {
-    //   this.dataService
-    //     .get<Blob>(`http://localhost:8080/api/v1/users/${this.userID}/photo`)
-    //     .subscribe((response) => {
-    //       this.photoSrc =
-    //         "data:image/jpeg;base64," +
-    //         JSON.parse(JSON.stringify(response.body));
-    //       this.sanitizer.bypassSecurityTrustUrl(this.photoSrc);
-    //     });
-    // } else {
-    //   this.dataService
-    //     .get<Blob>(`http://localhost:8080/api/v1/users/${this.userID}/cv`)
-    //     .subscribe((response) => {
-    //       this.pdfSrc =
-    //         "data:image/jpeg;base64," +
-    //         JSON.parse(JSON.stringify(response.body));
-    //       this.sanitizer.bypassSecurityTrustUrl(this.pdfSrc);
-    //     });
-    // }
+    this.pdfComponent.pdfViewer.currentScaleValue = "page-fit";
   }
 
   initForm() {
-    const firstname = '';
-    const lastname = '';
-    const gender = '';
-    const email = '';
-    const phoneNumber = '';
-    const district = '';
-    const provinceID = '-1';
+    const firstname = "";
+    const lastname = "";
+    const gender = "";
+    const email = "";
+    const phoneNumber = "";
+    const district = "";
+    const provinceID = "-1";
     const experience = 0;
-    const aboutUser = '';
-
-    // this.user = this.userService.getUser(this.userID);
+    const aboutUser = "";
 
     this.userForm = new FormGroup({
       firstname: new FormControl(firstname, Validators.required),
@@ -181,7 +162,7 @@ export class UserComponent implements OnInit {
         (control: AbstractControl) => {
           return this.forbiddenValue.indexOf(control.value) === -1
             ? null
-            : {forbiddenValue: true};
+            : { forbiddenValue: true };
         },
       ]),
       district: new FormControl(district, [
@@ -189,14 +170,12 @@ export class UserComponent implements OnInit {
         (control: AbstractControl) => {
           return this.forbiddenValue.indexOf(control.value) === -1
             ? null
-            : {forbiddenValue: true};
+            : { forbiddenValue: true };
         },
       ]),
       experience: new FormControl(experience, Validators.required),
       aboutUser: new FormControl(aboutUser, Validators.required),
     });
-    console.log(31);
-    console.log(this.isFormValid());
   }
 
   patchForm() {
@@ -218,17 +197,17 @@ export class UserComponent implements OnInit {
 
     this.sanitizer.bypassSecurityTrustUrl(event.url);
     switch (event.type) {
-      case 'photo':
+      case "photo":
         this.photoSrc = event.url;
         break;
-      case 'cv':
+      case "cv":
         this.pdfSrc = event.url;
         break;
     }
   }
 
   onProvinceChange() {
-    this.userForm.patchValue({district: '-1'});
+    this.userForm.patchValue({ district: "-1" });
   }
 
   getProvinces() {
@@ -236,10 +215,10 @@ export class UserComponent implements OnInit {
   }
 
   getDistricts() {
-    if (this.userForm.get('provinceID').value > -1) {
+    if (this.userForm.get("provinceID").value > -1) {
       return this.locationService.getProvinces()[
-        this.userForm.get('provinceID').value
-        ].ilceleri;
+        this.userForm.get("provinceID").value
+      ].ilceleri;
     }
   }
 }

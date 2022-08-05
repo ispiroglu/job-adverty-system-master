@@ -79,15 +79,17 @@
   </span>
 </div>
 
-<div class="row justify-content-center display: flex; align-items: stretch;">
+<div
+  class="card-group justify-content-center"
+  style="display: flex; align-items: stretch"
+>
   <span
     *ngFor="let advert of theAdverts"
-    class="col-lg-3 col-md-4 col-sm-6 col-xs-12"
+    class="col-lg-4 col-md-6 col-sm-12"
     style="padding: 16px"
   >
-    <!-- Pipes will change -->
-    <span class="card card-stats text-right" style="height: 15 vh">
-      <span class="card-body row">
+    <span class="card card-stats text-right h-100" style="overflow: hidden">
+      <span class="card-body col-12 row" style="overflow: hidden">
         <span class="col-md-4 col-xs-12">
           <img
             src="{{ advert.imageURL }}"
@@ -100,17 +102,16 @@
               object-position: 45% 45%;
             "
           />
-          <!-- Should show img nicely -->
         </span>
-        <span class="col-md-8 col-xs-12 numbers">
+        <span class="col-md-8 col-xs-11 numbers" style="overflow: hidden">
           <p class="card-category">{{ advert.advertName }}</p>
           <p class="card-title">{{ advert.position }}</p>
-          <p class="card-text" style="font-size: 17px">
+          <p class="card-text" style="font-size: 15px">
             {{ advert.summary }}
           </p>
         </span>
       </span>
-      <span class="card-footer">
+      <span class="card-footer text-muted">
         <hr />
         <span class="row stats" style="justify-content: space-evenly">
           <button
@@ -138,7 +139,10 @@
               </p></span
             >
           </button>
-          <p class="col-md-8 col-xs-12" style="text-align: end">
+          <p
+            class="col-md-8 col-xs-12"
+            style="text-align: end; font-size: 13px"
+          >
             {{ advert.location }}
           </p>
         </span>
@@ -146,3 +150,66 @@
     </span>
   </span>
 </div>
+
+<!-- <div class="row card-decks justify-content-center">
+  <div
+    *ngFor="let advert of theAdverts"
+    class="card col-md-4 col-sm-6 col-xs-12"
+  >
+    <span class="card-body row">
+      <span class="col-md-4 col-xs-12">
+        <img
+          src="{{ advert.imageURL }}"
+          alt=""
+          class="icon-big text-center icon-warning"
+          style="
+            width: 100%;
+            height: 85px;
+            object-fit: contain;
+            object-position: 45% 45%;
+          "
+        />
+      </span>
+      <span class="col-md-8 col-xs-11 numbers" style="overflow: hidden">
+        <p class="card-category row">{{ advert.advertName }}</p>
+        <p class="card-title row">{{ advert.position }}</p>
+        <p class="card-text row" style="font-size: 15px">
+          {{ advert.summary }}
+        </p>
+      </span>
+    </span>
+    <span class="card-footer">
+      <hr />
+      <span class="row stats" style="justify-content: space-evenly">
+        <button
+          type="button"
+          class="btn btn-link col-md-3 col-xs-12"
+          style="width: auto"
+          (click)="onClickApply(advert.id)"
+        >
+          <span
+            class="row"
+            style="justify-content: center; vertical-align: middle"
+          >
+            <i
+              *ngIf="isAdmin"
+              class="fa fa-pencil"
+              style="vertical-align: middle"
+            ></i>
+            <i
+              *ngIf="!isAdmin"
+              class="fa fa-handshake-o"
+              style="vertical-align: middle"
+            ></i>
+            <p style="vertical-align: middle">
+              {{ isAdmin ? "Edit" : "Apply" }}
+            </p></span
+          >
+        </button>
+        <p class="col-md-8 col-xs-12" style="text-align: end">
+          {{ advert.location }}
+        </p>
+      </span>
+    </span>
+  </div>
+</div> -->

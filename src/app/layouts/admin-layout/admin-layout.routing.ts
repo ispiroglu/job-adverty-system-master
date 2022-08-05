@@ -6,7 +6,6 @@ import { AdvertsComponent } from "../../pages/adverts/adverts.component";
 import { AdvertComponent } from "app/pages/adverts/advert/advert.component";
 import { AuthComponent } from "app/auth/auth.component";
 import { ApplicationsComponent } from "app/pages/applications/applications.component";
-
 export const AdminLayoutRoutes: Routes = [
   { path: "dashboard", component: DashboardComponent },
   { path: "user", component: UserComponent },

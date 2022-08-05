@@ -14,10 +14,10 @@ import { UserModal } from "app/pages/adverts/advert/advert-modal/advert-modal.co
 import { AuthComponent } from "app/auth/auth.component";
 import { LoadingSpinnerComponent } from "app/shared/loading-spinner/loading-spinner.component";
 import { ApplicationsComponent } from "app/pages/applications/applications.component";
-import {FileUploadComponent} from '../../shared/file-upload/file-upload/file-upload.component';
-import {AdvertComponent} from '../../pages/adverts/advert/advert.component';
-import {TableComponent} from '../../pages/adverts/advert/table/table.component';
-import {QuillEditorComponent} from 'ngx-quill';
+import { FileUploadComponent } from "../../shared/file-upload/file-upload/file-upload.component";
+import { AdvertComponent } from "../../pages/adverts/advert/advert.component";
+import { TableComponent } from "../../pages/adverts/advert/table/table.component";
+import { QuillEditorComponent } from "ngx-quill";
 
 @NgModule({
   imports: [
@@ -43,7 +43,7 @@ import {QuillEditorComponent} from 'ngx-quill';
     ApplicationsComponent,
     FileUploadComponent,
     AdvertComponent,
-    TableComponent
+    TableComponent,
   ],
 })
 export class AdminLayoutModule {}

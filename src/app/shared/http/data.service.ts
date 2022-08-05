@@ -1,4 +1,4 @@
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BaseHttpService } from "./base-http.service";
 
@@ -12,26 +12,33 @@ export class DataService extends BaseHttpService {
 
   create<T>(resource, url: string) {
     const headers = new HttpHeaders();
-    headers.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    headers.set(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+    );
     return this.httpPost<T>(url, resource, headers);
   }
 
   update<T>(resource, url: string) {
     const headers = new HttpHeaders();
-    headers.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
+    headers.set(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+    );
     return this.httpPatch(url, resource, headers);
   }
 
   delete<T>(url: string) {
     const headers = new HttpHeaders();
-    headers.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    console.log("Deleting -Z " + url)
+    headers.set(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+    );
     return this.httpDelete(url, headers);
   }
   get<T>(url: string) {
     const headers = new HttpHeaders();
-    headers.set('Content-Type', 'application/json; charset=utf-8')
+    headers.set("Content-Type", "application/json; charset=utf-8");
     return this.httpGet<T>(url, headers);
   }
 }

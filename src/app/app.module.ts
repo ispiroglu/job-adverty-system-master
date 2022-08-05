@@ -12,17 +12,19 @@ import { AppComponent } from "./app.component";
 import { AppRoutes } from "./app.routing";
 
 import { AdminLayoutComponent } from "./layouts/admin-layout/admin-layout.component";
-import { AdvertComponent } from "./pages/adverts/advert/advert.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { QuillModule } from "ngx-quill";
-import { TableComponent } from "./pages/adverts/advert/table/table.component";
 import { HttpClientModule } from "@angular/common/http";
 import { DatePipe } from "@angular/common";
+import { LoginComponent } from "./pages/login/login.component";
+import { RegisterComponent } from "./pages/register/register.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     AdminLayoutComponent,
+    LoginComponent,
+    RegisterComponent,
   ],
   imports: [
     BrowserAnimationsModule,
@@ -37,7 +39,6 @@ import { DatePipe } from "@angular/common";
     ReactiveFormsModule,
     FormsModule,
     QuillModule.forRoot(),
-
     HttpClientModule,
   ],
   providers: [DatePipe],

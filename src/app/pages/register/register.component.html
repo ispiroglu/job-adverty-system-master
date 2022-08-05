@@ -1,0 +1,53 @@
+<div class="login-form">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <h1 style="text-align: center">Register</h1>
+    <div class="content">
+      <div class="input-field">
+        <input
+          type="text"
+          placeholder="Name"
+          autocomplete="nope"
+          formControlName="firstname"
+        />
+      </div>
+      <div class="input-field">
+        <input
+          type="text"
+          placeholder="Surname"
+          autocomplete="nope"
+          formControlName="lastname"
+        />
+      </div>
+      <div class="input-field">
+        <input
+          type="email"
+          placeholder="Email"
+          autocomplete="nope"
+          formControlName="email"
+        />
+      </div>
+      <div class="input-field">
+        <input
+          type="password"
+          placeholder="Password"
+          autocomplete="new-password"
+          formControlName="password"
+        />
+      </div>
+      <div class="input-field">
+        <input
+          type="checkbox"
+          placeholder="Are you an employer"
+          formControlName="isEmployer"
+        />
+        Are you an employer?
+      </div>
+    </div>
+    <div class="action">
+      <button type="button" (click)="switchToLogin()">
+        Do you have account?
+      </button>
+      <button>Sign in</button>
+    </div>
+  </form>
+</div>
