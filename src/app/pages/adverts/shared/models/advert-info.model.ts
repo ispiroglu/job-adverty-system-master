@@ -1,6 +1,4 @@
-import { User } from "app/pages/user/shared/model/user.model";
-
-export class AdminAdvertInfo {
+export class AdvertInfo {
   constructor(
     public id: number,
     public name: string,
