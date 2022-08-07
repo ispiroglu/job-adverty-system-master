@@ -66,7 +66,7 @@ export class UserComponent implements OnInit {
       this.userID = this.inModal.id;
       this.userForm.disable();
     } else {
-      this.userID = 7;
+      this.userID = 9;
     }
     this.dataService
       .get<Blob>(`http://localhost:8080/api/v1/users/${this.userID}/photo`)
@@ -86,7 +86,6 @@ export class UserComponent implements OnInit {
       .get<User>(`http://localhost:8080/api/v1/users/${this.userID}`)
       .subscribe((response) => {
         this.user = response.body;
-        console.log(this.user);
         this.patchForm();
       });
 
@@ -127,9 +126,7 @@ export class UserComponent implements OnInit {
         this.user,
         `http://localhost:8080/api/v1/users/${this.userID}`
       )
-      .subscribe((response) => {
-        console.log(response);
-      });
+      .subscribe((response) => {});
   }
 
   isFormValid() {
@@ -141,23 +138,17 @@ export class UserComponent implements OnInit {
   }
 
   initForm() {
-    const firstname = "";
-    const lastname = "";
-    const gender = "";
-    const email = "";
-    const phoneNumber = "";
-    const district = "";
-    const provinceID = "-1";
-    const experience = 0;
-    const aboutUser = "";
-
     this.userForm = new FormGroup({
-      firstname: new FormControl(firstname, Validators.required),
-      lastname: new FormControl(lastname, Validators.required),
-      gender: new FormControl(gender.toLocaleLowerCase(), Validators.required),
-      email: new FormControl(email, [Validators.required, Validators.email]),
-      phoneNumber: new FormControl(phoneNumber, Validators.required),
-      provinceID: new FormControl(provinceID, [
+      firstname: new FormControl(null, Validators.required),
+      lastname: new FormControl(null, Validators.required),
+      gender: new FormControl(null, Validators.required),
+      email: new FormControl(null, [Validators.required, Validators.email]),
+      phoneNumber: new FormControl(null, [
+        Validators.required,
+        Validators.minLength(10),
+        Validators.maxLength(10),
+      ]),
+      provinceID: new FormControl(null, [
         Validators.required,
         (control: AbstractControl) => {
           return this.forbiddenValue.indexOf(control.value) === -1
@@ -165,7 +156,7 @@ export class UserComponent implements OnInit {
             : { forbiddenValue: true };
         },
       ]),
-      district: new FormControl(district, [
+      district: new FormControl(null, [
         Validators.required,
         (control: AbstractControl) => {
           return this.forbiddenValue.indexOf(control.value) === -1
@@ -173,28 +164,29 @@ export class UserComponent implements OnInit {
             : { forbiddenValue: true };
         },
       ]),
-      experience: new FormControl(experience, Validators.required),
-      aboutUser: new FormControl(aboutUser, Validators.required),
+      experience: new FormControl(null, [
+        Validators.required,
+        Validators.min(0),
+      ]),
+      aboutUser: new FormControl(null, Validators.required),
     });
   }
 
   patchForm() {
     this.userForm.patchValue({
-      firstname: this.user.firstname,
-      lastname: this.user.lastname,
-      gender: this.user.gender.toLocaleLowerCase(),
-      email: this.user.email,
-      phoneNumber: this.user.phoneNumber,
-      provinceID: this.user.provinceID,
-      district: this.user.district,
-      experience: this.user.experience,
-      aboutUser: this.user.aboutUser,
+      firstname: this.user.firstname ? this.user.firstname : "",
+      lastname: this.user.lastname ? this.user.lastname : "",
+      gender: this.user.gender ? this.user.gender.toLocaleLowerCase() : "male",
+      email: this.user.email ? this.user.email : "",
+      phoneNumber: this.user.phoneNumber ? this.user.phoneNumber : "",
+      provinceID: this.user.provinceID ? this.user.provinceID : -1,
+      district: this.user.district ? this.user.district : "-1",
+      experience: this.user.experience ? this.user.experience : 0,
+      aboutUser: this.user.aboutUser ? this.user.aboutUser : "",
     });
   }
 
   cachedFile(event: { url: string; type: string }) {
-    console.log(event);
-
     this.sanitizer.bypassSecurityTrustUrl(event.url);
     switch (event.type) {
       case "photo":

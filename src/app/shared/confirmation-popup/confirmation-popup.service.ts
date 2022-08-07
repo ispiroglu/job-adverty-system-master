@@ -1,12 +1,11 @@
 import { Injectable } from "@angular/core";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import Swal from "sweetalert2";
 
 @Injectable({
   providedIn: "root",
 })
 export class ConfirmationPopupService {
-  constructor(private modalService: NgbModal) {}
+  constructor() {}
 
   confirm(title: string, fn: Function) {
     Swal.fire({

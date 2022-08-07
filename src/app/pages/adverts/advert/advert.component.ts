@@ -20,6 +20,8 @@ import { LocationService } from "app/shared/locationJson/location-json.service";
 import { Subject, Subscription } from "rxjs";
 import { AdvertInfo } from "../shared/models/advert-info.model";
 import { DomSanitizer } from "@angular/platform-browser";
+import { HttpStatusCode } from "@angular/common/http";
+import { ErrorPopupService } from "app/shared/error-popup/error-popup.service";
 
 @Component({
   selector: "app-advert",
@@ -57,6 +59,7 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
     private authService: AuthService,
     private locationService: LocationService,
     private confirmationService: ConfirmationPopupService,
+    private errorPopupService: ErrorPopupService,
     private dataService: DataService,
     private sanitizer: DomSanitizer
   ) {}
@@ -104,8 +107,6 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.advertForm.valid && this.photoUrl;
   }
   onSubmit() {
-    console.log(this.findInvalidControls());
-
     const confirmText = !this.isAdmin
       ? "Do you really want to apply to this job? "
       : this.createMode
@@ -125,31 +126,56 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
             this.currentUserID,
             `http://localhost:8080/api/v1/adverts/${this.advertID}/applications`
           )
-          .subscribe((response) => {});
+          .subscribe(
+            (response) => {},
+            (error) => {
+              this.errorPopupService.alert(error.error.message);
+            }
+          );
       } else {
         this.formToAdvert();
-        console.log(this.advert);
+        if (
+          this.advertForm.get("startDate").value >
+          this.advertForm.get("endDate").value
+        ) {
+          this.errorPopupService.alert(
+            "Advert starting date can not be after ending date!"
+          );
+          return;
+        }
         if (this.createMode) {
           this.dataService
             .create<AdvertInfo>(
               this.advert,
               `http://localhost:8080/api/v1/adverts`
             )
-            .subscribe((response) => {
-              this.sendRequestSubject.next(response.body.id);
-            });
+            .subscribe(
+              (response) => {
+                this.sendRequestSubject.next(response.body.id);
+              },
+              (error) => {
+                this.errorPopupService.alert(error.error.message);
+              }
+            );
         } else {
           this.dataService
             .update<AdvertInfo>(
               this.advert,
               `http://localhost:8080/api/v1/adverts/${this.advertID}/adminView`
             )
-            .subscribe((response) => {});
+            .subscribe(
+              (response) => {
+                this.sendRequestSubject.next(this.advertID);
+              },
+              (error) => {
+                this.errorPopupService.alert(error.error.message);
+              }
+            );
         }
       }
       setTimeout(() => {
         this.router.navigate(["../"], { relativeTo: this.route });
-      }, 500)
+      }, 500);
     });
   }
 
@@ -188,7 +214,7 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
           });
         setTimeout(() => {
           this.router.navigate(["../"], { relativeTo: this.route });
-        }, 500)
+        }, 500);
       }
     );
   }
@@ -199,35 +225,22 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private initForm() {
-    const jobName = "";
-    const jobSummary = "";
-    const jobStartDate = new Date().toDateString();
-    const jobEndDate = new Date().toDateString();
-    const jobProvinceID = 0;
-    const jobProvince = "";
-    const jobDistrict = "";
-    const jobPosition = "";
-    const jobDesc = "";
-    const jobCapacity = 0;
-    const jobCompanyName = "";
-    const jobDepartment = "";
-
     this.advertForm = new FormGroup({
-      name: new FormControl(jobName, Validators.required), // Validators
-      summary: new FormControl(jobSummary, Validators.required),
-      position: new FormControl(jobPosition, Validators.required),
-      capacity: new FormControl(jobCapacity, Validators.required),
-      companyName: new FormControl(jobCompanyName, Validators.required),
-      department: new FormControl(jobDepartment, Validators.required),
+      name: new FormControl(null, Validators.required), // Validators
+      summary: new FormControl(null, Validators.required),
+      position: new FormControl(null, Validators.required),
+      capacity: new FormControl(null, [Validators.required, Validators.min(0)]),
+      companyName: new FormControl(null, Validators.required),
+      department: new FormControl(null, Validators.required),
       startDate: new FormControl(
-        formatDate(jobStartDate, "yyyy-MM-dd", "en"),
+        formatDate(null, "yyyy-MM-dd", "en"),
         Validators.required
       ),
       endDate: new FormControl(
-        formatDate(jobEndDate, "yyyy-MM-dd", "en"),
+        formatDate(null, "yyyy-MM-dd", "en"),
         Validators.required
       ),
-      provinceID: new FormControl(jobProvinceID, [
+      provinceID: new FormControl(null, [
         Validators.required,
         (control: AbstractControl) => {
           return this.forbiddenValue.indexOf(control.value) === -1
@@ -235,8 +248,8 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
             : { forbiddenValue: true };
         },
       ]),
-      province: new FormControl(jobProvince),
-      district: new FormControl(jobDistrict, [
+      province: new FormControl(null),
+      district: new FormControl(null, [
         Validators.required,
         (control: AbstractControl) => {
           return this.forbiddenValue.indexOf(control.value) === -1
@@ -244,7 +257,7 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
             : { forbiddenValue: true };
         },
       ]),
-      jobDefinition: new FormControl(jobDesc, [
+      jobDefinition: new FormControl(null, [
         Validators.required,
         Validators.minLength(20),
       ]),
@@ -252,7 +265,7 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (!this.isAdmin) {
       this.advertForm.disable();
-      this.currentUserID = 2;
+      this.currentUserID = 9;
     }
   }
 

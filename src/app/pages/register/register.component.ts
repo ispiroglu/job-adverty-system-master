@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { Router } from "@angular/router";
 import { DataService } from "app/shared/http/data.service";
 
 @Component({
@@ -9,7 +10,7 @@ import { DataService } from "app/shared/http/data.service";
 })
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
-  constructor(private dataService: DataService) {}
+  constructor(private dataService: DataService, private router: Router) {}
 
   ngOnInit(): void {
     this.registerForm = new FormGroup({
@@ -37,5 +38,7 @@ export class RegisterComponent implements OnInit {
       });
   }
 
-  switchToLogin() {}
+  switchToLogin() {
+    this.router.navigate(["/login"]);
+  }
 }

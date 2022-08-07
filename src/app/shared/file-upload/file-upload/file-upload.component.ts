@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { HttpClient, HttpEventType } from "@angular/common/http";
 import { FileUploadService } from "../file-upload.service";
 import { finalize, Subject, Subscription } from "rxjs";
+import { ErrorPopupService } from "app/shared/error-popup/error-popup.service";
 
 @Component({
   selector: "app-file-upload",
@@ -24,7 +25,10 @@ export class FileUploadComponent implements OnInit {
   uploadSub: Subscription;
   formData: FormData;
 
-  constructor(private fileService: FileUploadService) {}
+  constructor(
+    private fileService: FileUploadService,
+    private errorPopupService: ErrorPopupService
+  ) {}
   ngOnInit(): void {
     this.sendRequestSubject.subscribe((id: number) => {
       if (id) {
@@ -40,9 +44,14 @@ export class FileUploadComponent implements OnInit {
     const file: File = event.target.files[0];
 
     if (file) {
+      if (file.size > 11026764) {
+        this.errorPopupService.alert(
+          "Cannot Upload this file. File size is to big. Max File size is 10 MB!"
+        );
+        return;
+      }
       const reader = new FileReader();
       reader.readAsDataURL(file);
-
       reader.onload = (event: any) => {
         this.cachedFile.next({
           url: reader.result as string,

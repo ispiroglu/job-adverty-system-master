@@ -80,6 +80,7 @@
         type="date"
         id="endDate"
         name="endDate"
+        [min]="advertForm.get('startDate').value"
         placeholder="Select Date"
         class="col-sm-12 nc-calendar form-control"
         formControlName="endDate"
