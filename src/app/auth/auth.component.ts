@@ -30,16 +30,16 @@ export class AuthComponent implements OnInit {
     } else {
       const email = authForm.value.email;
       const password = authForm.value.password;
-      this.authService.signUp(email, password).subscribe(
-        (responseData) => {
-          console.log(responseData);
-          this.isLoading = !this.isLoading;
-        },
-        (errorResp) => {
-          this.isLoading = !this.isLoading;
-          this.error = "An Error Occured";
-        }
-      );
+      // this.authService.signUp(email, password).subscribe(
+      //   (responseData) => {
+      //     console.log(responseData);
+      //     this.isLoading = !this.isLoading;
+      //   },
+      //   (errorResp) => {
+      //     this.isLoading = !this.isLoading;
+      //     this.error = "An Error Occured";
+      //   }
+      // );
     }
 
     authForm.reset();

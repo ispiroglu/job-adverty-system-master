@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { catchError, throwError } from "rxjs";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { catchError, Observable, throwError } from "rxjs";
 
 interface AuthResponseData {
   idToken: string;
@@ -14,29 +14,63 @@ interface AuthResponseData {
   providedIn: "root",
 })
 export class AuthService {
+  public clientID = "advert-service";
+  public redirectUri = "http://localhost:4200/login";
   constructor(private httpClient: HttpClient) {}
 
-  signUp(email: string, password: string) {
-    return this.httpClient
-      .post(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCi4jByWaXrFV3xi3ujMWDbMPmum166GHM",
-        { email: email, password: password, returnSecureToken: true }
-      )
-      .pipe(
-        catchError((errorResp) => {
-          let errorMessage = "An unknown error occured!";
-          if (!errorResp.error || !errorResp.error.error) {
-            return throwError(errorMessage);
-          }
-          switch (errorResp.error.error.message) {
-            case "EMAIL_EXISTS":
-              errorMessage = "This email exists already.";
-          }
+  retrieveToken(code) {
+    let params = new URLSearchParams();
+    params.append("grant_type", "authorization_code");
+    params.append("client_id", this.clientID);
+    params.append("client_secret", "6X1giwZ5SVL7WbZAEIAWya75ELBhvFYx");
+    params.append("redirect_uri", this.redirectUri);
+    params.append("code", code);
 
-          return throwError(errorMessage);
-        })
+    let headers = new HttpHeaders({
+      "Content-type": "application/x-www-form-urlencoded; charset=utf-8",
+    });
+
+    this.httpClient
+      .post(
+        "http://localhost:8090/realms/dev/protocol/openid-connect/token",
+        params.toString(),
+        { headers: headers }
+      )
+      .subscribe(
+        (data) => this.saveToken(data),
+        (err) => {
+          console.log(err);
+
+          alert("Invalid Credentials");
+        }
       );
   }
 
-  login(email: string, password: string) {}
+  saveToken(token) {
+    var expireDate = new Date().getTime() + 1000 * token.expires_in;
+    localStorage.setItem("access_token", token.access_token);
+    // localStorage.setItem("access_token", token.access_token, expireDate);
+    console.log("Obtained Access token");
+    window.location.href = "http://localhost:4200/";
+  }
+
+  getResource(resourceUrl): Observable<any> {
+    console.log(localStorage.getItem("access_token"));
+
+    var headers = new HttpHeaders({
+      "Content-type": "application/x-www-form-urlencoded; charset=utf-8",
+      Authorization: "Bearer " + localStorage.getItem("access_token"),
+    });
+
+    return this.httpClient.get(resourceUrl, { headers: headers });
+  }
+
+  checkCredentials() {
+    return !!localStorage.getItem("access_token");
+  }
+
+  logout() {
+    localStorage.removeItem("access_token");
+    window.location.reload();
+  }
 }

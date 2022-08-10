@@ -110,6 +110,8 @@ export class UserComponent implements OnInit {
           this.userForm.get("provinceID").value
         ].il,
     });
+    console.log(this.userForm.value);
+
     this.confirmationPopupService.confirm(
       "Do you want to update your profile?",
       this.updateUser.bind(this)

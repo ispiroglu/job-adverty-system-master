@@ -1,4 +1,4 @@
-<div class="login-form">
+<!-- <div class="login-form">
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <h1>Login</h1>
     <div class="content">
@@ -24,4 +24,21 @@
       <button>Sign in</button>
     </div>
   </form>
+</div> -->
+
+<div class="container">
+  <button
+    *ngIf="!isLoggedIn"
+    class="btn btn-primary"
+    (click)="login()"
+    type="submit"
+  >
+    Login
+  </button>
+  <div *ngIf="isLoggedIn" class="content">
+    <span>Welcome !!</span>
+    <a class="btn btn-default pull-right" (click)="logout()" href="#">Logout</a>
+    <br />
+    <app-register></app-register>
+  </div>
 </div>

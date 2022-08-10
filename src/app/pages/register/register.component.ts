@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
+import { AuthService } from "app/auth/auth.service";
 import { DataService } from "app/shared/http/data.service";
 
 @Component({
@@ -10,7 +11,14 @@ import { DataService } from "app/shared/http/data.service";
 })
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
-  constructor(private dataService: DataService, private router: Router) {}
+  public foo = { id: 1, name: "evren" };
+  private foosUrl = "http://localhost:8081/resource-server/api/foos/";
+
+  constructor(
+    private dataService: DataService,
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.registerForm = new FormGroup({
@@ -40,5 +48,12 @@ export class RegisterComponent implements OnInit {
 
   switchToLogin() {
     this.router.navigate(["/login"]);
+  }
+
+  getFoo() {
+    this.authService.getResource(this.foosUrl + this.foo.id).subscribe(
+      (data) => (this.foo = data),
+      (error) => (this.foo.name = "Error")
+    );
   }
 }

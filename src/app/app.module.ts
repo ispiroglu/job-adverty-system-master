@@ -29,7 +29,7 @@ import { RegisterComponent } from "./pages/register/register.component";
   imports: [
     BrowserAnimationsModule,
     RouterModule.forRoot(AppRoutes, {
-      useHash: true,
+      useHash: false,
     }),
     SidebarModule,
     NavbarModule,
