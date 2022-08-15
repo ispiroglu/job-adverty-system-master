@@ -1,12 +1,4 @@
 <div class="card">
-  <span class="card-header">
-    Adverts
-    <span class="justify-content-right">
-      <button class="btn btn-primary" (click)="onClickToggleLog()">
-        Toggle Login
-      </button>
-    </span>
-  </span>
   <span class="card-body">
     <div class="row" style="justify-content: center">
       <span class="col-md-2">
@@ -80,6 +72,12 @@
 </div>
 
 <div
+  infinite-scroll
+  [infiniteScrollDistance]="scrollDistance"
+  [infiniteScrollUpDistance]="scrollUpDistance"
+  [infiniteScrollThrottle]="throttle"
+  (scrolled)="onScrollDown()"
+  (scrolledUp)="onScrolledUp()"
   class="card-group justify-content-center"
   style="display: flex; align-items: stretch"
 >

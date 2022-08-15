@@ -12,6 +12,7 @@ import { User } from "./shared/model/user.model";
 import { DataService } from "../../shared/http/data.service";
 import { DomSanitizer } from "@angular/platform-browser";
 import { Subject } from "rxjs";
+import { AuthService } from "app/shared/auth.service";
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -57,16 +58,21 @@ export class UserComponent implements OnInit {
     private locationService: LocationService,
     private confirmationPopupService: ConfirmationPopupService,
     private dataService: DataService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    console.log(123123);
+
     this.initForm();
+    console.log("LALAL");
     if (this.inModal) {
       this.userID = this.inModal.id;
+      console.log(this.userID);
       this.userForm.disable();
     } else {
-      this.userID = 9;
+      this.userID = this.authService.userId;
     }
     this.dataService
       .get<Blob>(`http://localhost:8080/api/v1/users/${this.userID}/photo`)

@@ -71,6 +71,7 @@
         name="startDate"
         placeholder="Select Date"
         class="col-sm-12 nc-calendar form-control"
+        [min]="today.toISOString().split('T')[0]"
         formControlName="startDate"
       />
     </span>
@@ -121,7 +122,7 @@
         formControlName="provinceID"
         (change)="onProvinceChange()"
       >
-        <option value="-1">Please select province.</option>
+        <option value="forb">Please select province.</option>
         <option
           *ngFor="let province of getProvinces()"
           value="{{ province.plaka }}"
@@ -138,7 +139,7 @@
         formControlName="district"
         #district
       >
-        <option value="-1">Please select province.</option>
+        <option value="forb">Please select province.</option>
         <option
           selected
           *ngFor="let district of getDistricts()"

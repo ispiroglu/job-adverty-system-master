@@ -1,19 +1,27 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { Params } from "@angular/router";
 
 export class BaseHttpService {
   constructor(protected httpClient: HttpClient) {}
 
-  httpGet<T>(requestUrl: string = "", headers?: HttpHeaders) {
+  httpGet<T>(requestUrl: string = "", headers?: HttpHeaders, params?: Params) {
     return this.httpClient.get<T>(requestUrl, {
       headers,
       observe: "response",
+      params: params,
     });
   }
 
-  httpPost<T>(requestUrl: string = "", data: any, headers?: HttpHeaders) {
+  httpPost<T>(
+    requestUrl: string = "",
+    data: any,
+    headers?: HttpHeaders,
+    params?: HttpParams
+  ) {
     return this.httpClient.post<T>(requestUrl, data, {
       headers,
       observe: "response",
+      params,
     });
   }
 
@@ -25,7 +33,7 @@ export class BaseHttpService {
   }
 
   httpDelete<T>(requestUrl: string = "", headers?: HttpHeaders) {
-    return this.httpClient.get<T>(requestUrl, {
+    return this.httpClient.delete<T>(requestUrl, {
       headers,
       observe: "response",
     });

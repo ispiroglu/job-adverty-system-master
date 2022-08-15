@@ -4,8 +4,9 @@ import { AuthService } from "app/shared/auth.service";
 import { LocationService } from "app/shared/locationJson/location-json.service";
 import { AdvertCardModel } from "./shared/models/advert-card.model";
 import { DataService } from "app/shared/http/data.service";
-import {FilterModel} from './shared/models/filter.model';
-import {DomSanitizer} from '@angular/platform-browser';
+import { FilterModel } from "./shared/models/filter.model";
+import { DomSanitizer } from "@angular/platform-browser";
+import { HttpHeaders, HttpParams } from "@angular/common/http";
 
 @Component({
   selector: "notifications-cmp",
@@ -20,7 +21,13 @@ export class AdvertsComponent implements OnInit {
   selectedDepartment = "";
   selectedPosition = "";
   isAdmin = true;
+  pageCount = 0;
+  sum = 12;
   theAdverts: AdvertCardModel[];
+
+  throttle = 300;
+  scrollDistance = 2;
+  scrollUpDistance = 6;
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -31,19 +38,27 @@ export class AdvertsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.authService.adminHasChanged.subscribe((isLoggedIn: boolean) => {
+      this.isAdmin = isLoggedIn;
+    });
+
+    let params = new HttpParams().append("page", this.pageCount);
+    if (this.isAdmin) {
+      params = params.append("creatorID", this.authService.userId);
+    } else {
+      params = params.append("creatorID", -1);
+    }
+    console.log(params);
+
     this.dataService
-      .get<AdvertCardModel[]>("http://localhost:8080/api/v1/adverts")
+      .get<any>("http://localhost:8080/api/v1/adverts", params)
       .subscribe((response) => {
-        this.theAdverts = JSON.parse(JSON.stringify(response.body));
+        this.theAdverts = JSON.parse(JSON.stringify(response.body.content));
         for (const advertCard of this.theAdverts) {
-          advertCard.imageURL = 'data:image/jpeg;base64,' + advertCard.image;
+          advertCard.imageURL = "data:image/jpeg;base64," + advertCard.image;
           this.sanitizer.bypassSecurityTrustUrl(advertCard.imageURL);
         }
       });
-
-    this.authService.adminHasChanged.subscribe(
-      (isLoggedIn: boolean) => { this.isAdmin = isLoggedIn }
-    )
   }
 
   onClickApply(id: number) {
@@ -57,26 +72,60 @@ export class AdvertsComponent implements OnInit {
     this.router.navigate(["new"], { relativeTo: this.route });
   }
   onClickToggleLog() {
-    console.log("1")
-    this.authService.toggleLoggedIn();
+    console.log("1");
   }
   onClickFilter() {
     const provinceID = this.provinceFilter.nativeElement.value;
     let province: string;
-    provinceID === "-1" ? province = "" : province = this.getProvinces()[provinceID].il;
-    const filterModel = new FilterModel(this.searchText, this.selectedDepartment, this.selectedPosition, province);
+    provinceID === "-1"
+      ? (province = "")
+      : (province = this.getProvinces()[provinceID].il);
+    const filterModel = new FilterModel(
+      this.searchText,
+      this.selectedDepartment,
+      this.selectedPosition,
+      province
+    );
 
     this.dataService
-      .update<AdvertCardModel[]>(filterModel, "http://localhost:8080/api/v1/adverts/filter")
+      .update<AdvertCardModel[]>(
+        filterModel,
+        "http://localhost:8080/api/v1/adverts/filter"
+      )
       .subscribe((response) => {
         this.theAdverts = JSON.parse(JSON.stringify(response.body));
         for (const advertCard of this.theAdverts) {
-          advertCard.imageURL = 'data:image/jpeg;base64,' + advertCard.image;
+          advertCard.imageURL = "data:image/jpeg;base64," + advertCard.image;
           this.sanitizer.bypassSecurityTrustUrl(advertCard.imageURL);
         }
       });
   }
   getProvinces() {
     return this.locationService.getProvinces();
+  }
+
+  appendItems() {
+    let params = new HttpParams().append("page", this.pageCount);
+    this.dataService
+      .get<any>("http://localhost:8080/api/v1/adverts", params)
+      .subscribe((response) => {
+        const newAdverts = JSON.parse(JSON.stringify(response.body.content));
+        this.theAdverts.push(...newAdverts);
+        for (const advertCard of this.theAdverts) {
+          advertCard.imageURL = "data:image/jpeg;base64," + advertCard.image;
+          this.sanitizer.bypassSecurityTrustUrl(advertCard.imageURL);
+        }
+      });
+  }
+
+  onScrollDown() {
+    this.pageCount++;
+    this.appendItems();
+  }
+  onScrolledUp() {
+    if (this.pageCount !== 0) {
+      this.pageCount--;
+      this.theAdverts = this.theAdverts.splice(0, this.theAdverts.length - 9);
+    }
   }
 }

@@ -1,8 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { AuthService } from "app/auth/auth.service";
+import { AuthService } from "app/shared/auth.service";
 import { DataService } from "app/shared/http/data.service";
+import Swal from "sweetalert2";
 
 @Component({
   selector: "app-register",
@@ -12,7 +13,6 @@ import { DataService } from "app/shared/http/data.service";
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
   public foo = { id: 1, name: "evren" };
-  private foosUrl = "http://localhost:8081/resource-server/api/foos/";
 
   constructor(
     private dataService: DataService,
@@ -21,6 +21,10 @@ export class RegisterComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    if (this.authService.loggedIn) {
+      this.router.navigate(["/adverts"]);
+    }
+
     this.registerForm = new FormGroup({
       firstname: new FormControl(null, Validators.required),
       lastname: new FormControl(null, Validators.required),
@@ -39,21 +43,23 @@ export class RegisterComponent implements OnInit {
     this.dataService
       .create<any>(
         this.registerForm.value,
-        "http://localhost:8080/api/v1/users"
+        "http://localhost:8080/api/v1/users/registration"
       )
-      .subscribe((response) => {
-        console.log(response);
-      });
+      .subscribe(
+        (response) => {
+          Swal.fire({
+            icon: "success",
+            title: "Redirecting the login page.",
+            text: "You can login from now.",
+          }).then((resp) => {
+            this.switchToLogin();
+          });
+        },
+        (err) => {}
+      );
   }
 
   switchToLogin() {
     this.router.navigate(["/login"]);
-  }
-
-  getFoo() {
-    this.authService.getResource(this.foosUrl + this.foo.id).subscribe(
-      (data) => (this.foo = data),
-      (error) => (this.foo.name = "Error")
-    );
   }
 }

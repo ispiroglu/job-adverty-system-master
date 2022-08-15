@@ -11,13 +11,13 @@ import { PdfViewerModule } from "ng2-pdf-viewer";
 import { NgxExtendedPdfViewerModule } from "ngx-extended-pdf-viewer";
 import { MatDialogModule } from "@angular/material/dialog";
 import { UserModal } from "app/pages/adverts/advert/advert-modal/advert-modal.component";
-import { AuthComponent } from "app/auth/auth.component";
 import { LoadingSpinnerComponent } from "app/shared/loading-spinner/loading-spinner.component";
 import { ApplicationsComponent } from "app/pages/applications/applications.component";
 import { FileUploadComponent } from "../../shared/file-upload/file-upload/file-upload.component";
 import { AdvertComponent } from "../../pages/adverts/advert/advert.component";
 import { TableComponent } from "../../pages/adverts/advert/table/table.component";
 import { QuillEditorComponent } from "ngx-quill";
+import { InfiniteScrollModule } from "ngx-infinite-scroll";
 
 @NgModule({
   imports: [
@@ -31,6 +31,7 @@ import { QuillEditorComponent } from "ngx-quill";
     MatDialogModule,
     NgbTooltipModule,
     QuillEditorComponent,
+    InfiniteScrollModule,
   ],
   declarations: [
     DashboardComponent,
@@ -38,7 +39,6 @@ import { QuillEditorComponent } from "ngx-quill";
     TableComponent,
     AdvertsComponent,
     UserModal,
-    AuthComponent,
     LoadingSpinnerComponent,
     ApplicationsComponent,
     FileUploadComponent,

@@ -5,7 +5,7 @@ export class DashboardModel {
     // public today: Date,
     public totalAdvertCount: number,
     public totalUserCount: number,
-    public totalEventCount: number,
+    public totalApplicationCount: number,
     public soonEndingAdverts: AdvertInfoModel[],
     public soonStartingAdverts: AdvertInfoModel[]
   ) {}

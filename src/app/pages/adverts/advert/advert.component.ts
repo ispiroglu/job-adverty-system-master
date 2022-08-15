@@ -20,7 +20,7 @@ import { LocationService } from "app/shared/locationJson/location-json.service";
 import { Subject, Subscription } from "rxjs";
 import { AdvertInfo } from "../shared/models/advert-info.model";
 import { DomSanitizer } from "@angular/platform-browser";
-import { HttpStatusCode } from "@angular/common/http";
+import { HttpParams, HttpStatusCode } from "@angular/common/http";
 import { ErrorPopupService } from "app/shared/error-popup/error-popup.service";
 
 @Component({
@@ -28,10 +28,10 @@ import { ErrorPopupService } from "app/shared/error-popup/error-popup.service";
   templateUrl: "./advert.component.html",
   styleUrls: ["./advert.component.scss"],
 })
-export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
+export class AdvertComponent implements OnInit, OnDestroy {
   advert: AdvertInfo;
   currentUserID: number;
-  forbiddenValue = "-1";
+  forbiddenValue = "forb";
   photoUrl = "";
   advertForm: FormGroup;
   loginSubs: Subscription;
@@ -47,6 +47,7 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
     requiredFileType: string;
     caption: string;
   };
+  today = new Date();
   @Output() sendRequestSubject = new Subject<number>();
   quillEditorStyle = {
     height: "300px",
@@ -63,10 +64,9 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
     private dataService: DataService,
     private sanitizer: DomSanitizer
   ) {}
-  ngAfterViewInit(): void {}
 
   ngOnInit(): void {
-    this.isAdmin = this.authService.loggedIn;
+    this.isAdmin = this.authService.isEmployer;
     this.loginSubs = this.authService.adminHasChanged.subscribe(
       (isAdmin: boolean) => {
         this.isAdmin = isAdmin;
@@ -76,13 +76,7 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
       this.advertID = +params["id"];
       this.createMode = params["id"] === undefined;
     });
-    this.dataService
-      .get<Blob>(`http://localhost:8080/api/v1/adverts/${this.advertID}/photo`)
-      .subscribe((response) => {
-        this.photoUrl =
-          "data:image/jpeg;base64," + JSON.parse(JSON.stringify(response.body));
-        this.sanitizer.bypassSecurityTrustUrl(this.photoUrl);
-      });
+
     this.initForm();
 
     if (!this.createMode) {
@@ -93,6 +87,17 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
         .subscribe((response) => {
           this.advert = JSON.parse(JSON.stringify(response.body));
           this.patchForm();
+        });
+
+      this.dataService
+        .get<Blob>(
+          `http://localhost:8080/api/v1/adverts/${this.advertID}/photo`
+        )
+        .subscribe((response) => {
+          this.photoUrl =
+            "data:image/jpeg;base64," +
+            JSON.parse(JSON.stringify(response.body));
+          this.sanitizer.bypassSecurityTrustUrl(this.photoUrl);
         });
     }
     this.photoUploadCredentials = {
@@ -144,16 +149,24 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
           return;
         }
         if (this.createMode) {
+          console.log("Create");
+          let params = new HttpParams().append(
+            "creatorID",
+            this.authService.userId
+          );
           this.dataService
             .create<AdvertInfo>(
               this.advert,
-              `http://localhost:8080/api/v1/adverts`
+              `http://localhost:8080/api/v1/adverts`,
+              params
             )
             .subscribe(
               (response) => {
                 this.sendRequestSubject.next(response.body.id);
               },
               (error) => {
+                console.log(error);
+
                 this.errorPopupService.alert(error.error.message);
               }
             );
@@ -208,7 +221,7 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
       () => {
         console.log("DELETE");
         this.dataService
-          .delete(`http://localhost:8080/api/v1/adverts/${this.advertID}`)
+          .delete<any>(`http://localhost:8080/api/v1/adverts/${this.advertID}`)
           .subscribe((response) => {
             console.log(response);
           });
@@ -232,15 +245,13 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
       capacity: new FormControl(null, [Validators.required, Validators.min(0)]),
       companyName: new FormControl(null, Validators.required),
       department: new FormControl(null, Validators.required),
-      startDate: new FormControl(
-        formatDate(null, "yyyy-MM-dd", "en"),
-        Validators.required
-      ),
-      endDate: new FormControl(
-        formatDate(null, "yyyy-MM-dd", "en"),
-        Validators.required
-      ),
-      provinceID: new FormControl(null, [
+      startDate: new FormControl(formatDate(this.today, "yyyy-MM-dd", "en"), [
+        Validators.required,
+      ]),
+      endDate: new FormControl(formatDate(this.today, "yyyy-MM-dd", "en"), [
+        Validators.required,
+      ]),
+      provinceID: new FormControl("forb", [
         Validators.required,
         (control: AbstractControl) => {
           return this.forbiddenValue.indexOf(control.value) === -1
@@ -249,7 +260,7 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
         },
       ]),
       province: new FormControl(null),
-      district: new FormControl(null, [
+      district: new FormControl("-1", [
         Validators.required,
         (control: AbstractControl) => {
           return this.forbiddenValue.indexOf(control.value) === -1
@@ -265,7 +276,7 @@ export class AdvertComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (!this.isAdmin) {
       this.advertForm.disable();
-      this.currentUserID = 9;
+      this.currentUserID = this.authService.userId;
     }
   }
 
