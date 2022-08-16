@@ -10,7 +10,7 @@ import { NgbModule, NgbTooltipModule } from "@ng-bootstrap/ng-bootstrap";
 import { PdfViewerModule } from "ng2-pdf-viewer";
 import { NgxExtendedPdfViewerModule } from "ngx-extended-pdf-viewer";
 import { MatDialogModule } from "@angular/material/dialog";
-import { UserModal } from "app/pages/adverts/advert/advert-modal/advert-modal.component";
+import { UserModalComponent } from "app/pages/adverts/advert/advert-modal/user-modal.component";
 import { LoadingSpinnerComponent } from "app/shared/loading-spinner/loading-spinner.component";
 import { ApplicationsComponent } from "app/pages/applications/applications.component";
 import { FileUploadComponent } from "../../shared/file-upload/file-upload/file-upload.component";
@@ -38,7 +38,7 @@ import { InfiniteScrollModule } from "ngx-infinite-scroll";
     UserComponent,
     TableComponent,
     AdvertsComponent,
-    UserModal,
+    UserModalComponent,
     LoadingSpinnerComponent,
     ApplicationsComponent,
     FileUploadComponent,

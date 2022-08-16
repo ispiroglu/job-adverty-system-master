@@ -7,13 +7,14 @@ import {
 } from "@angular/core";
 import { NgbModal, NgbModalRef } from "@ng-bootstrap/ng-bootstrap";
 import * as XLSX from "xlsx";
-import { UserModal } from "../advert-modal/advert-modal.component";
+import { UserModalComponent } from "../advert-modal/user-modal.component";
 import { DataService } from "../../../../shared/http/data.service";
 import { TableUserInfoModel } from "./model/table-user-info.model";
 import { Subscription } from "rxjs";
+import {LOCALHOST_ADVERTS} from '../../../../shared/config/advert-constants/advert-constants.constants';
 
 @Component({
-  selector: "table-cmp",
+  selector: "app-applicant-table",
   moduleId: module.id,
   templateUrl: "table.component.html",
   styles: [
@@ -29,7 +30,6 @@ import { Subscription } from "rxjs";
   encapsulation: ViewEncapsulation.None,
 })
 export class TableComponent implements OnInit, OnDestroy {
-  closeResult = "";
   @Input() advertID: number;
   applicants: TableUserInfoModel[];
   private modalRef: NgbModalRef;
@@ -41,16 +41,10 @@ export class TableComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.dataService
-      .get<TableUserInfoModel[]>(
-        `http://localhost:8080/api/v1/adverts/${this.advertID}/applications`
-      )
-      .subscribe((response) => {
-        this.applicants = response.body;
-      });
+    this.getApplicants()
   }
   onClickApplicant(applicant: TableUserInfoModel) {
-    this.modalRef = this.modalService.open(UserModal, {
+    this.modalRef = this.modalService.open(UserModalComponent, {
       size: "xl",
       scrollable: true,
       backdropClass: "modal-index",
@@ -59,18 +53,7 @@ export class TableComponent implements OnInit, OnDestroy {
     this.modalRef.componentInstance.advertID = this.advertID;
     this.modalSub = this.modalRef.componentInstance.tableChanged.subscribe(
       () => {
-        console.log("NEXT");
-
-        this.dataService
-          .get<TableUserInfoModel[]>(
-            `http://localhost:8080/api/v1/adverts/${this.advertID}/applications`
-          )
-          .subscribe((response) => {
-            console.log("NEW TABLE");
-
-            this.applicants = response.body;
-            console.log(this.applicants);
-          });
+        this.getApplicants();
       }
     );
   }
@@ -83,5 +66,15 @@ export class TableComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.modalSub?.unsubscribe();
+  }
+
+  private getApplicants() {
+    this.dataService
+      .get<TableUserInfoModel[]>(
+        LOCALHOST_ADVERTS + `/${this.advertID}/applications`
+      )
+      .subscribe((response) => {
+        this.applicants = response.body;
+      });
   }
 }

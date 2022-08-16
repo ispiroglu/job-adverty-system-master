@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { AuthService } from "app/shared/auth.service";
+import { AuthService } from "app/shared/auth/auth.service";
 
 export interface RouteInfo {
   path: string;

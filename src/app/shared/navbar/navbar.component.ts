@@ -8,7 +8,7 @@ import {
 // import { ROUTES } from '../../sidebar/sidebar.component';
 import { Router } from "@angular/router";
 import { Location } from "@angular/common";
-import { AuthService } from "../auth.service";
+import { AuthService } from "../auth/auth.service";
 
 @Component({
   moduleId: module.id,

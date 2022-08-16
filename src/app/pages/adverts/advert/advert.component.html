@@ -11,7 +11,7 @@
     <app-file-upload
       *ngIf="isAdmin"
       [uploadCredentials]="photoUploadCredentials"
-      [sendPhotoSubject]="sendRequestSubject"
+      [sendPhotoSubject]="sendPhotoHandler"
       (cachedFile)="cachedFile($event)"
     ></app-file-upload>
   </span>
@@ -177,11 +177,11 @@
     </span>
   </span>
 
-  <table-cmp
+  <app-applicant-table
     *ngIf="isAdmin && !createMode"
     class="col-md-12"
     [advertID]="advertID"
-  ></table-cmp>
+  ></app-applicant-table>
 
   <span class="row">
     <button

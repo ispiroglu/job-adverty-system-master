@@ -1,13 +1,8 @@
-import { HttpHeaders, HttpParams, HttpStatusCode } from "@angular/common/http";
-import { Component, OnChanges, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { AuthService } from "app/shared/auth.service";
+import { AuthService } from "app/shared/auth/auth.service";
 import { ErrorPopupService } from "app/shared/error-popup/error-popup.service";
-import { DataService } from "app/shared/http/data.service";
-import jwtDecode from "jwt-decode";
-import { User } from "../user/shared/model/user.model";
-import { UserLoginModel } from "./model/user-login.model";
 
 @Component({
   selector: "app-login",
@@ -16,12 +11,10 @@ import { UserLoginModel } from "./model/user-login.model";
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
-
   public isLoggedIn = false;
 
   constructor(
     private router: Router,
-    private dataService: DataService,
     private authService: AuthService,
     private errorService: ErrorPopupService
   ) {}
@@ -45,45 +38,15 @@ export class LoginComponent implements OnInit {
       this.errorService.alert("Please fill the blanks correctly!");
       return;
     }
-
-    this.dataService
-      .get<any>("http://localhost:8080/api/v1/login", this.loginForm.value)
-      .subscribe(
-        (response) => {
-          localStorage.setItem("access_token", response.body.access_token);
-          localStorage.setItem("refresh_token", response.body.refresh_token);
-          let decodedToken: any = jwtDecode(response.body.access_token);
-          console.log(decodedToken);
-
-          const email = decodedToken.sub;
-          this.dataService
-            .get<any>(`http://localhost:8080/api/v1/users/login/${email}`, null)
-            .subscribe(
-              (response) => {
-                console.log(response);
-
-                this.authService.userInit.next({
-                  id: response.body.id,
-                  isEmployer: response.body.employer,
-                  ownedAdvertIds: response.body.ownedAdvertIDs,
-                });
-
-                this.router.navigate(["/adverts"]);
-              },
-              (error) => {
-                this.errorService.alert(error.error.message);
-              }
-            );
-        },
-        (error) => {
-          if (error.status === HttpStatusCode.Forbidden) {
-            this.errorService.alert("Invalid email or password");
-          } else {
-            this.errorService.alert("Please try again");
-          }
-        }
-      );
+    this.sendLoginRequest();
   }
+
+  private sendLoginRequest() {
+    this.authService.login(
+      { email: this.loginForm.get('email').value,
+                      password: this.loginForm.get('password').value});
+  }
+
   switchToRegister() {
     this.router.navigate(["/register"]);
   }

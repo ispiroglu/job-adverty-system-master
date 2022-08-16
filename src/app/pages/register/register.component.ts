@@ -1,9 +1,11 @@
-import { Component, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { AuthService } from "app/shared/auth.service";
+import { AuthService } from "app/shared/auth/auth.service";
 import { DataService } from "app/shared/http/data.service";
 import Swal from "sweetalert2";
+import {ErrorPopupService} from '../../shared/error-popup/error-popup.service';
+import {LOCALHOST_USERS} from '../../shared/config/user-constants/user-constants.constans';
 
 @Component({
   selector: "app-register",
@@ -12,19 +14,29 @@ import Swal from "sweetalert2";
 })
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
-  public foo = { id: 1, name: "evren" };
-
   constructor(
     private dataService: DataService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private errorPopupService: ErrorPopupService
   ) {}
 
   ngOnInit(): void {
     if (this.authService.loggedIn) {
       this.router.navigate(["/adverts"]);
+      return;
     }
+    this.initForm();
+  }
 
+  onSubmit() {
+    this.sendRegistrationRequest();
+  }
+
+  switchToLogin() {
+    this.router.navigate(["/login"]);
+  }
+  private initForm() {
     this.registerForm = new FormGroup({
       firstname: new FormControl(null, Validators.required),
       lastname: new FormControl(null, Validators.required),
@@ -36,14 +48,11 @@ export class RegisterComponent implements OnInit {
       isEmployer: new FormControl(false, Validators.required),
     });
   }
-
-  onSubmit() {
-    console.log(this.registerForm.value);
-
+  private sendRegistrationRequest() {
     this.dataService
       .create<any>(
         this.registerForm.value,
-        "http://localhost:8080/api/v1/users/registration"
+        LOCALHOST_USERS + "/registration"
       )
       .subscribe(
         (response) => {
@@ -55,11 +64,9 @@ export class RegisterComponent implements OnInit {
             this.switchToLogin();
           });
         },
-        (err) => {}
+        (err) => {
+          this.errorPopupService.alert(err.error.message);
+        }
       );
-  }
-
-  switchToLogin() {
-    this.router.navigate(["/login"]);
   }
 }

@@ -12,11 +12,12 @@ import { User } from "./shared/model/user.model";
 import { DataService } from "../../shared/http/data.service";
 import { DomSanitizer } from "@angular/platform-browser";
 import { Subject } from "rxjs";
-import { AuthService } from "app/shared/auth.service";
+import { AuthService } from "app/shared/auth/auth.service";
+import {FileCredentialsModel} from '../../shared/file-upload/model/file-credentials.model';
+import {LOCALHOST_USERS} from '../../shared/config/user-constants/user-constants.constans';
 
 @Component({
-  // tslint:disable-next-line:component-selector
-  selector: "user-cmp",
+  selector: "app-user",
   moduleId: module.id,
   templateUrl: "user.component.html",
   styleUrls: ["user.component.scss"],
@@ -31,27 +32,18 @@ import { AuthService } from "app/shared/auth.service";
 export class UserComponent implements OnInit {
   @ViewChild(PdfViewerComponent, { static: false })
   private pdfComponent: PdfViewerComponent;
-  editMode = true;
+  @Input() inModal;
+
   userID: number;
   pdfSrc: string;
   photoSrc: string;
   user: User;
   forbiddenValue = "-1";
-  @Input() inModal;
   userForm: FormGroup;
 
-  photoUploadCredentials: {
-    type: string;
-    ID: number;
-    requiredFileType: string;
-    caption: string;
-  };
-  cvUploadCredentials: {
-    type: string;
-    ID: number;
-    requiredFileType: string;
-    caption: string;
-  };
+  photoUploadCredentials: FileCredentialsModel;
+  cvUploadCredentials: FileCredentialsModel;
+
   @Output() sendCvSubject = new Subject<number>();
   @Output() sendPhotoSubject = new Subject<number>();
 
@@ -69,53 +61,19 @@ export class UserComponent implements OnInit {
       this.userID = this.inModal.id;
       this.userForm.disable();
     } else {
-      this.authService.adminHasChanged.subscribe(() => {
+      this.authService.employerControllerHandler.subscribe(() => {
         this.userID = this.authService.userId;
       });
     }
-    this.dataService
-      .get<Blob>(`http://localhost:8080/api/v1/users/${this.userID}/photo`)
-      .subscribe((response) => {
-        this.photoSrc =
-          "data:image/jpeg;base64," + JSON.parse(JSON.stringify(response.body));
-        this.sanitizer.bypassSecurityTrustUrl(this.photoSrc);
-      });
-    this.dataService
-      .get<Blob>(`http://localhost:8080/api/v1/users/${this.userID}/cv`)
-      .subscribe((response) => {
-        this.pdfSrc =
-          "data:image/jpeg;base64," + JSON.parse(JSON.stringify(response.body));
-        this.sanitizer.bypassSecurityTrustUrl(this.pdfSrc);
-      });
-    this.dataService
-      .get<User>(`http://localhost:8080/api/v1/users/${this.userID}`)
-      .subscribe((response) => {
-        this.user = response.body;
-        this.patchForm();
-      });
-
-    this.photoUploadCredentials = {
-      type: "user",
-      ID: this.userID,
-      requiredFileType: "image/png, ,image/jpeg",
-      caption: "photo",
-    };
-    this.cvUploadCredentials = {
-      type: "user",
-      ID: this.userID,
-      requiredFileType: "application/pdf",
-      caption: "cv",
-    };
+    this.getUserDetails();
+    this.getUserPhoto();
+    this.getUserCv();
+    this.photoUploadCredentials = new FileCredentialsModel("user", this.userID, "image/png, ,image/jpeg", "photo")
+    this.cvUploadCredentials = new FileCredentialsModel("user", this.userID, "application/pdf", "cv")
   }
 
   onClickSubmit() {
-    this.userForm.patchValue({
-      province:
-        this.locationService.getProvinces()[
-          this.userForm.get("provinceID").value
-        ].il,
-    });
-
+    this.correctProvinceID(),
     this.confirmationPopupService.confirm(
       "Do you want to update your profile?",
       this.updateUser.bind(this)
@@ -147,7 +105,34 @@ export class UserComponent implements OnInit {
     this.pdfComponent.pdfViewer.currentScaleValue = "page-fit";
   }
 
-  initForm() {
+  cachedFile(event: { url: string; type: string }) {
+    this.sanitizer.bypassSecurityTrustUrl(event.url);
+    switch (event.type) {
+      case "photo":
+        this.photoSrc = event.url;
+        break;
+      case "cv":
+        this.pdfSrc = event.url;
+        break;
+    }
+  }
+
+  onProvinceChange() {
+    this.userForm.patchValue({ district: "-1" });
+  }
+
+  getProvinces() {
+    return this.locationService.getProvinces();
+  }
+
+  getDistricts() {
+    if (this.userForm.get("provinceID").value > -1) {
+      return this.locationService.getProvinces()[
+        this.userForm.get("provinceID").value
+      ].ilceleri;
+    }
+  }
+  private initForm() {
     this.userForm = new FormGroup({
       firstname: new FormControl(null, Validators.required),
       lastname: new FormControl(null, Validators.required),
@@ -182,7 +167,35 @@ export class UserComponent implements OnInit {
     });
   }
 
-  patchForm() {
+  private getUserDetails() {
+    this.dataService
+      .get<User>(LOCALHOST_USERS + `/${this.userID}`)
+      .subscribe((response) => {
+        this.user = response.body;
+        this.patchForm();
+      });
+  }
+  private getUserPhoto() {
+    this.dataService
+      .get<Blob>(LOCALHOST_USERS + `/${this.userID}/photo`)
+      .subscribe((response) => {
+        this.photoSrc =
+          "data:image/jpeg;base64," + JSON.parse(JSON.stringify(response.body));
+        this.sanitizer.bypassSecurityTrustUrl(this.photoSrc);
+      });
+  }
+
+  private getUserCv() {
+    this.dataService
+      .get<Blob>(LOCALHOST_USERS + `/${this.userID}/cv`)
+      .subscribe((response) => {
+        this.pdfSrc =
+          "data:image/jpeg;base64," + JSON.parse(JSON.stringify(response.body));
+        this.sanitizer.bypassSecurityTrustUrl(this.pdfSrc);
+      });
+  }
+
+  private patchForm() {
     this.userForm.patchValue({
       firstname: this.user.firstname ? this.user.firstname : "",
       lastname: this.user.lastname ? this.user.lastname : "",
@@ -196,31 +209,12 @@ export class UserComponent implements OnInit {
     });
   }
 
-  cachedFile(event: { url: string; type: string }) {
-    this.sanitizer.bypassSecurityTrustUrl(event.url);
-    switch (event.type) {
-      case "photo":
-        this.photoSrc = event.url;
-        break;
-      case "cv":
-        this.pdfSrc = event.url;
-        break;
-    }
-  }
-
-  onProvinceChange() {
-    this.userForm.patchValue({ district: "-1" });
-  }
-
-  getProvinces() {
-    return this.locationService.getProvinces();
-  }
-
-  getDistricts() {
-    if (this.userForm.get("provinceID").value > -1) {
-      return this.locationService.getProvinces()[
+  private correctProvinceID() {
+    this.userForm.patchValue({
+      province:
+      this.locationService.getProvinces()[
         this.userForm.get("provinceID").value
-      ].ilceleri;
-    }
+        ].il,
+    });
   }
 }

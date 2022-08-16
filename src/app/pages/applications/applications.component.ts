@@ -1,7 +1,9 @@
 import { Component, OnInit } from "@angular/core";
-import { AuthService } from "app/shared/auth.service";
+import { AuthService } from "app/shared/auth/auth.service";
 import { DataService } from "../../shared/http/data.service";
 import { ApplicationTableInfoModel } from "./model/application-table-info.model";
+import { LOCALHOST_ADVERTS } from '../../shared/config/advert-constants/advert-constants.constants';
+import {ErrorPopupService} from '../../shared/error-popup/error-popup.service';
 
 @Component({
   selector: "app-applications",
@@ -13,28 +15,22 @@ export class ApplicationsComponent implements OnInit {
 
   constructor(
     private dataService: DataService,
-    private authService: AuthService
+    private authService: AuthService,
+    private errorPopupService: ErrorPopupService
   ) {}
+
   ngOnInit() {
     this.userID = this.authService.userId;
-    console.log();
-
-    console.log(this.userID);
-
     this.dataService
       .get<ApplicationTableInfoModel[]>(
-        `http://localhost:8080/api/v1/users/${this.userID}/applications`
+        LOCALHOST_ADVERTS + `/${this.userID}/applications`
       )
       .subscribe(
         (response) => {
-          console.log("repos");
-
-          console.log(response);
-
           this.applications = response.body;
         },
         (error) => {
-          console.log(error);
+          this.errorPopupService.alert(error.error.message);
         }
       );
   }

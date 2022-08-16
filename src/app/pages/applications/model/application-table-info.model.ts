@@ -1,4 +1,4 @@
-import {AdvertStatus} from '../../../shared/application/application.model';
+import {ApplicationStatus} from '../../../shared/application/application-status.model';
 
 export class ApplicationTableInfoModel {
   constructor(
@@ -6,6 +6,6 @@ export class ApplicationTableInfoModel {
   public position: String,
   public summary: String,
   public location: String,
-  public status: AdvertStatus,
+  public status: ApplicationStatus,
   ) {}
 }

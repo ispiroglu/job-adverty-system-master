@@ -1,8 +1,8 @@
-import {AdvertStatus} from '../../../../../shared/application/application.model';
+import {ApplicationStatus} from '../../../../../shared/application/application-status.model';
 
 export class UpdateApplicationStatusModel {
   constructor(
     public userId: number,
-    public newStatus: AdvertStatus
+    public newStatus: ApplicationStatus
   ) {}
 }
