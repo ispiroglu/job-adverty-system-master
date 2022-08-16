@@ -216,20 +216,35 @@ export class AdvertComponent implements OnInit, OnDestroy {
     });
   }
   onClickDelete() {
-    this.confirmationService.confirm(
-      "Are you sure to delete this advert?",
-      () => {
-        console.log("DELETE");
-        this.dataService
-          .delete<any>(`http://localhost:8080/api/v1/adverts/${this.advertID}`)
-          .subscribe((response) => {
-            console.log(response);
-          });
-        setTimeout(() => {
-          this.router.navigate(["../"], { relativeTo: this.route });
-        }, 500);
-      }
-    );
+    this.dataService
+      .get<boolean>(
+        `http://localhost:8080/api/v1/adverts/${this.advertID}/applications/closable`
+      )
+      .subscribe((response) => {
+        const canClose = response.body;
+        if (canClose) {
+          this.confirmationService.confirm(
+            "Are you sure to delete this advert?",
+            () => {
+              console.log("DELETE");
+              this.dataService
+                .delete<any>(
+                  `http://localhost:8080/api/v1/adverts/${this.advertID}`
+                )
+                .subscribe((response) => {
+                  console.log(response);
+                });
+              setTimeout(() => {
+                this.router.navigate(["../"], { relativeTo: this.route });
+              }, 500);
+            }
+          );
+        } else {
+          this.errorPopupService.alert(
+            "In order to delete this advert, you need to decide all the applications."
+          );
+        }
+      });
   }
   onContentChanged(event) {
     if (event.editor.getLength() > this.maxLength) {

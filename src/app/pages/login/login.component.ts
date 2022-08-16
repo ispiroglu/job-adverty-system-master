@@ -41,6 +41,11 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
+    if (this.loginForm.invalid) {
+      this.errorService.alert("Please fill the blanks correctly!");
+      return;
+    }
+
     this.dataService
       .get<any>("http://localhost:8080/api/v1/login", this.loginForm.value)
       .subscribe(
@@ -72,7 +77,7 @@ export class LoginComponent implements OnInit {
         },
         (error) => {
           if (error.status === HttpStatusCode.Forbidden) {
-            this.errorService.alert("Wrong crededentials!");
+            this.errorService.alert("Invalid email or password");
           } else {
             this.errorService.alert("Please try again");
           }

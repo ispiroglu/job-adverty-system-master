@@ -42,8 +42,10 @@ export class UserModal implements OnInit {
         request,
         `http://localhost:8080/api/v1/adverts/${this.advertID}/applications`
       )
-      .subscribe((response) => {});
-    this.tableChanged.next({});
+      .subscribe((response) => {
+        this.tableChanged.next({});
+      });
+
     this.onClickCancel();
   }
   onClickReject() {
@@ -56,8 +58,10 @@ export class UserModal implements OnInit {
         request,
         `http://localhost:8080/api/v1/adverts/${this.advertID}/applications`
       )
-      .subscribe((response) => {});
-    this.tableChanged.next({});
+      .subscribe((response) => {
+        this.tableChanged.next({});
+      });
+
     this.onClickCancel();
   }
   onClickCancel() {

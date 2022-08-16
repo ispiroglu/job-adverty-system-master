@@ -59,12 +59,17 @@ export class TableComponent implements OnInit, OnDestroy {
     this.modalRef.componentInstance.advertID = this.advertID;
     this.modalSub = this.modalRef.componentInstance.tableChanged.subscribe(
       () => {
+        console.log("NEXT");
+
         this.dataService
           .get<TableUserInfoModel[]>(
             `http://localhost:8080/api/v1/adverts/${this.advertID}/applications`
           )
           .subscribe((response) => {
+            console.log("NEW TABLE");
+
             this.applicants = response.body;
+            console.log(this.applicants);
           });
       }
     );

@@ -52,7 +52,8 @@ export class UserComponent implements OnInit {
     requiredFileType: string;
     caption: string;
   };
-  @Output() sendRequestSubject = new Subject<number>();
+  @Output() sendCvSubject = new Subject<number>();
+  @Output() sendPhotoSubject = new Subject<number>();
 
   constructor(
     private locationService: LocationService,
@@ -63,16 +64,14 @@ export class UserComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log(123123);
-
     this.initForm();
-    console.log("LALAL");
     if (this.inModal) {
       this.userID = this.inModal.id;
-      console.log(this.userID);
       this.userForm.disable();
     } else {
-      this.userID = this.authService.userId;
+      this.authService.adminHasChanged.subscribe(() => {
+        this.userID = this.authService.userId;
+      });
     }
     this.dataService
       .get<Blob>(`http://localhost:8080/api/v1/users/${this.userID}/photo`)
@@ -116,7 +115,6 @@ export class UserComponent implements OnInit {
           this.userForm.get("provinceID").value
         ].il,
     });
-    console.log(this.userForm.value);
 
     this.confirmationPopupService.confirm(
       "Do you want to update your profile?",
@@ -125,7 +123,6 @@ export class UserComponent implements OnInit {
   }
 
   updateUser() {
-    this.sendRequestSubject.next(this.userID);
     this.user = this.userForm.value;
     this.user.province =
       this.locationService.getProvinces()[this.user.provinceID].il;
@@ -134,7 +131,12 @@ export class UserComponent implements OnInit {
         this.user,
         `http://localhost:8080/api/v1/users/${this.userID}`
       )
-      .subscribe((response) => {});
+      .subscribe((response) => {
+        this.sendCvSubject.next(this.userID);
+        setTimeout(() => {
+          this.sendPhotoSubject.next(this.userID);
+        }, 500);
+      });
   }
 
   isFormValid() {

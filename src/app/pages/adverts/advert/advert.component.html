@@ -2,15 +2,16 @@
   <span class="card col-sm-12 form-group" style="justify-content: center">
     <img
       [(src)]="photoUrl"
+      onerror="this.src='../../../../assets/img/waikiki.png'"
       class="form-control"
       style="max-height: 200px; object-fit: contain"
     />
-    <!-- Need to store photoUrl -->
   </span>
   <span class="row col-sm-12">
     <app-file-upload
+      *ngIf="isAdmin"
       [uploadCredentials]="photoUploadCredentials"
-      [sendRequestSubject]="sendRequestSubject"
+      [sendPhotoSubject]="sendRequestSubject"
       (cachedFile)="cachedFile($event)"
     ></app-file-upload>
   </span>

@@ -17,7 +17,8 @@ export class FileUploadComponent implements OnInit {
     requiredFileType: string;
     caption: string;
   };
-  @Input() sendRequestSubject: Subject<number>;
+  @Input() sendPhotoSubject: Subject<number>;
+  @Input() sendCvSubject: Subject<number>;
   @Output() changed = new EventEmitter<string>();
   @Output() cachedFile = new EventEmitter<{ url: string; type: string }>();
 
@@ -30,14 +31,25 @@ export class FileUploadComponent implements OnInit {
     private errorPopupService: ErrorPopupService
   ) {}
   ngOnInit(): void {
-    this.sendRequestSubject.subscribe((id: number) => {
-      if (id) {
-        this.uploadCredentials.ID = id;
-      }
-      if (this.formData) {
-        this.sendRequest();
-      }
-    });
+    if (this.sendCvSubject) {
+      this.sendCvSubject.subscribe((id: number) => {
+        if (id) {
+          this.uploadCredentials.ID = id;
+        }
+        if (this.formData) {
+          this.sendRequest();
+        }
+      });
+    } else {
+      this.sendPhotoSubject.subscribe((id: number) => {
+        if (id) {
+          this.uploadCredentials.ID = id;
+        }
+        if (this.formData) {
+          this.sendRequest();
+        }
+      });
+    }
   }
 
   onFileSelected(event) {
@@ -69,6 +81,7 @@ export class FileUploadComponent implements OnInit {
       case "user":
         switch (this.uploadCredentials.caption) {
           case "photo":
+            console.log("uploading photo");
             this.fileService
               .uploadUserProfile(this.uploadCredentials.ID, this.formData)
               .pipe(finalize(() => this.reset()))
@@ -81,6 +94,7 @@ export class FileUploadComponent implements OnInit {
               });
             break;
           case "cv":
+            console.log("uploading cv");
             this.fileService
               .uploadUserCv(this.uploadCredentials.ID, this.formData)
               .pipe(finalize(() => this.reset()))

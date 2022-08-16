@@ -21,7 +21,7 @@
         <div class="update ml-auto mr-auto" *ngIf="!inModal">
           <app-file-upload
             [uploadCredentials]="cvUploadCredentials"
-            [sendRequestSubject]="sendRequestSubject"
+            [sendCvSubject]="sendCvSubject"
             (cachedFile)="cachedFile($event)"
           ></app-file-upload>
         </div>
@@ -52,7 +52,7 @@
               <div class="update ml-auto mr-auto" *ngIf="!inModal">
                 <app-file-upload
                   [uploadCredentials]="photoUploadCredentials"
-                  [sendRequestSubject]="sendRequestSubject"
+                  [sendPhotoSubject]="sendPhotoSubject"
                   (cachedFile)="cachedFile($event)"
                 ></app-file-upload>
               </div>

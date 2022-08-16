@@ -19,13 +19,13 @@ export class DataService extends BaseHttpService {
     return this.httpPost<T>(url, resource, headers, params);
   }
 
-  update<T>(resource, url: string) {
+  update<T>(resource, url: string, params?: HttpParams) {
     let headers = new HttpHeaders();
     headers = headers.append(
       "Authorization",
       "Bearer " + localStorage.getItem("access_token")
     );
-    return this.httpPatch(url, resource, headers);
+    return this.httpPatch(url, resource, headers, params);
   }
 
   delete<T>(url: string) {

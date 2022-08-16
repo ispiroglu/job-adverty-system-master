@@ -24,10 +24,10 @@ export class AdvertsComponent implements OnInit {
   pageCount = 0;
   sum = 12;
   theAdverts: AdvertCardModel[];
-
   throttle = 300;
   scrollDistance = 2;
   scrollUpDistance = 6;
+  filtered = false;
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -48,8 +48,6 @@ export class AdvertsComponent implements OnInit {
     } else {
       params = params.append("creatorID", -1);
     }
-    console.log(params);
-
     this.dataService
       .get<any>("http://localhost:8080/api/v1/adverts", params)
       .subscribe((response) => {
@@ -75,6 +73,7 @@ export class AdvertsComponent implements OnInit {
     console.log("1");
   }
   onClickFilter() {
+    this.filtered = true;
     const provinceID = this.provinceFilter.nativeElement.value;
     let province: string;
     provinceID === "-1"
@@ -86,13 +85,19 @@ export class AdvertsComponent implements OnInit {
       this.selectedPosition,
       province
     );
+    let params = new HttpParams();
+    this.isAdmin
+      ? (params = params.append("userID", this.authService.userId))
+      : (params = params.append("userID", -1));
 
     this.dataService
       .update<AdvertCardModel[]>(
         filterModel,
-        "http://localhost:8080/api/v1/adverts/filter"
+        "http://localhost:8080/api/v1/adverts/filter",
+        params
       )
       .subscribe((response) => {
+        this.theAdverts = [];
         this.theAdverts = JSON.parse(JSON.stringify(response.body));
         for (const advertCard of this.theAdverts) {
           advertCard.imageURL = "data:image/jpeg;base64," + advertCard.image;
@@ -106,6 +111,11 @@ export class AdvertsComponent implements OnInit {
 
   appendItems() {
     let params = new HttpParams().append("page", this.pageCount);
+    if (this.isAdmin) {
+      params = params.append("creatorID", this.authService.userId);
+    } else {
+      params = params.append("creatorID", -1);
+    }
     this.dataService
       .get<any>("http://localhost:8080/api/v1/adverts", params)
       .subscribe((response) => {
@@ -118,14 +128,36 @@ export class AdvertsComponent implements OnInit {
       });
   }
 
-  onScrollDown() {
-    this.pageCount++;
-    this.appendItems();
+  onClickClear() {
+    this.filtered = false;
+    this.pageCount = 0;
+    let params = new HttpParams().append("page", this.pageCount);
+    if (this.isAdmin) {
+      params = params.append("creatorID", this.authService.userId);
+    } else {
+      params = params.append("creatorID", -1);
+    }
+    this.dataService
+      .get<any>("http://localhost:8080/api/v1/adverts", params)
+      .subscribe((response) => {
+        this.theAdverts = JSON.parse(JSON.stringify(response.body.content));
+        for (const advertCard of this.theAdverts) {
+          advertCard.imageURL = "data:image/jpeg;base64," + advertCard.image;
+          this.sanitizer.bypassSecurityTrustUrl(advertCard.imageURL);
+        }
+      });
   }
-  onScrolledUp() {
-    if (this.pageCount !== 0) {
-      this.pageCount--;
-      this.theAdverts = this.theAdverts.splice(0, this.theAdverts.length - 9);
+
+  onScrollDown() {
+    if (!this.filtered) {
+      this.pageCount++;
+      this.appendItems();
     }
   }
+  // onScrolledUp() {
+  //   if (this.pageCount !== 0) {
+  //     this.pageCount--;
+  //     this.theAdverts = this.theAdverts.splice(0, this.theAdverts.length - 9);
+  //   }
+  // }
 }

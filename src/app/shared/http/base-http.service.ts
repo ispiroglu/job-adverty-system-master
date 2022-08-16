@@ -25,10 +25,16 @@ export class BaseHttpService {
     });
   }
 
-  httpPatch<T>(requestUrl: string = "", data: any, headers?: HttpHeaders) {
+  httpPatch<T>(
+    requestUrl: string = "",
+    data: any,
+    headers?: HttpHeaders,
+    params?: HttpParams
+  ) {
     return this.httpClient.patch<T>(requestUrl, data, {
       headers,
       observe: "response",
+      params,
     });
   }
 
