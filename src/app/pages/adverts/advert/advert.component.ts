@@ -55,6 +55,9 @@ export class AdvertComponent implements OnInit {
     height: "300px",
     backgroundColor: "#ffff",
   };
+  quillModules = {
+    toolbar: {}
+  };
 
   constructor(
     private route: ActivatedRoute,
@@ -195,7 +198,7 @@ export class AdvertComponent implements OnInit {
   }
 
   onProvinceChange() {
-    this.advertForm.patchValue({ district: "-1" });
+    this.advertForm.patchValue({ district: "forb" });
   }
   findInvalidControls() {
     const invalid = [];
@@ -268,7 +271,6 @@ export class AdvertComponent implements OnInit {
 
     if (!this.isAdmin) {
       this.advertForm.disable();
-      // this.currentUserID = this.authService.userId;
     }
   }
   private applyForAdvert() {
@@ -348,6 +350,7 @@ export class AdvertComponent implements OnInit {
       caption: "photo",
     };
   }
+
   private correctProvinceID() {
     this.advertForm.patchValue({
       province:

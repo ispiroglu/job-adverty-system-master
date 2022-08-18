@@ -87,7 +87,7 @@ export class UserComponent implements OnInit {
     this.dataService
       .update<User>(
         this.user,
-        `http://localhost:8080/api/v1/users/${this.userID}`
+        LOCALHOST_USERS + `/${this.userID}`
       )
       .subscribe((response) => {
         this.sendCvSubject.next(this.userID);

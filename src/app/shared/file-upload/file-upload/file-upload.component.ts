@@ -73,6 +73,9 @@ export class FileUploadComponent implements OnInit {
       this.fileName = file.name;
       this.formData = new FormData();
       this.formData.append("file", file);
+      /*
+      * TODO: Should call sendRequest here.
+      * */
     }
   }
 
@@ -81,7 +84,6 @@ export class FileUploadComponent implements OnInit {
       case "user":
         switch (this.uploadCredentials.caption) {
           case "photo":
-            console.log("uploading photo");
             this.fileService
               .uploadUserProfile(this.uploadCredentials.ID, this.formData)
               .pipe(finalize(() => this.reset()))
@@ -94,7 +96,6 @@ export class FileUploadComponent implements OnInit {
               });
             break;
           case "cv":
-            console.log("uploading cv");
             this.fileService
               .uploadUserCv(this.uploadCredentials.ID, this.formData)
               .pipe(finalize(() => this.reset()))

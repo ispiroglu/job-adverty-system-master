@@ -77,7 +77,7 @@ export class AuthService {
     localStorage.setItem(ACCESS_TOKEN, responseBody.access_token);
     localStorage.setItem(REFRESH_TOKEN, responseBody.refresh_token);
     const decodedToken: any  = jwtDecode(responseBody.access_token);
-    this.autoLogout(new Date(decodedToken.exp * 1000).getTime())
+    this.autoLogout(new Date(decodedToken.exp * 1000).getTime() - new Date().getTime())
   }
 
   private getUserAttributes(email: string) {

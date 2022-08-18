@@ -158,6 +158,7 @@
         <quill-editor
           id="jobDesc"
           [styles]="quillEditorStyle"
+          [modules]="quillModules"
           formControlName="jobDefinition"
           (onContentChanged)="onContentChanged($event)"
         ></quill-editor>
